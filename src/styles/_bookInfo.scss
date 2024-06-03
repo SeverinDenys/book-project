@@ -1,0 +1,29 @@
+
+.bookInfo {
+  background: $analogous-main-color1;
+  text-align: center;
+  margin: 2rem 0;
+
+   &__title  {
+     padding: 1rem 0;
+    font-size: 3rem;
+
+  }
+
+   &__author  {
+     padding: 1rem 0;
+    font-size: 2.5rem;
+
+  }
+
+  &__pageCount  {
+    padding: 1rem 0;
+   font-size: 2rem;
+
+ }
+  &__publishedDate  {
+    padding-bottom: 1rem;
+   font-size: 2rem;
+
+ }
+}
