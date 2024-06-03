@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 text.txt
+.env
+.gitignore
