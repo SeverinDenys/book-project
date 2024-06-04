@@ -12,5 +12,11 @@ html {
 }
 
 body {
- background: $main-color;
+ background: $background;
+}
+
+.container {
+   width: 30rem;
+   box-sizing: border-box;  
+   margin: 0 auto;  
 }

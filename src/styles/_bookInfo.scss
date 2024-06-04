@@ -4,17 +4,25 @@
   text-align: center;
   margin: 2rem 0;
   visibility: hidden;
+  background:$analogous-main-color2;
+  color: $main-color;
 
    &__title  {
-     padding: 1rem 0;
-    font-size: 3rem;
+     padding-top: 1rem;
+    font-size: 4rem;
 
   }
 
    &__author  {
      padding: 1rem 0;
-    font-size: 2.5rem;
+    font-size: 3rem;
+  }
 
+  &__description {
+      max-width: 25rem;
+    text-align: start;
+    margin: auto;
+ font-size: 2rem;
   }
 
   &__pageCount  {
@@ -25,6 +33,13 @@
   &__publishedDate  {
     padding-bottom: 1rem;
    font-size: 2rem;
-
  }
+
+ &__imageContainer{
+  padding: 1rem 0 1.5rem 0;
+
+  &--image {
+    width: 20rem;
+  }
+}
 }
