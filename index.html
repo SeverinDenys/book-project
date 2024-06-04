@@ -3,30 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
     <title>Book Project</title>
-    <script type="module" crossorigin src="/book-project/assets/index-BKtjS1Iu.js"></script>
-    <link rel="stylesheet" crossorigin href="/book-project/assets/index-D9Syo7-5.css">
+    <script type="module" crossorigin src="/book-project/assets/index-qmGqVnMh.js"></script>
+    <link rel="stylesheet" crossorigin href="/book-project/assets/index-bgHW3sOU.css">
   </head>
   <body>
+
+    <div class="container"> 
+  
+    <!-- Introduction part start -->
+    <div id="introduction" class="introduction">
+    <h1 class="introduction__title">Online Book Library</h1>
+    <p class="introduction__text"> Which book you are looking for? </p>
+  </div>
+    <!-- Introduction part end -->
+
     <!-- Form section start -->
-     <section id="form-container">
+     <section class="form-container"
+     id="form-container">
       <form class="form">
         <input type="search" class="form__input" placeholder="Search for the book">
-        <button class="form__button" type="submit">Submit</button>
-         
+        <button class="form__button" id="form__button" type="submit">Submit</button>
       </form>
      </section>
      <!-- Form section end -->
 
 
      <!-- bookInfo section start -->
-     <section class="bookInfo">
+     <section class="bookInfo" id="bookInfo">
       <h1 class="bookInfo__title"></h1>
       <h2 class="bookInfo__author"></h2>
       <h2 class="bookInfo__description"></h2>
       <h3 class="bookInfo__pageCount"></h3>
+        <div class="bookInfo__imageContainer"> 
+            <img src="" alt="image cover" id="bookInfo__image" class="bookInfo__imageContainer--image">
+        </div>
      </section>
-
      <!-- bookInfo section end -->
+    </div>
   </body>
 </html>
