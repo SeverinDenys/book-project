@@ -2,10 +2,10 @@
 .bookInfo {
   background: $analogous-main-color1;
   text-align: center;
-  margin: 2rem 0;
-  visibility: hidden;
+  margin: 2rem 0 3rem 0;
   background:$analogous-main-color2;
   color: $main-color;
+  padding: 2rem 0;
 
    &__title  {
      padding-top: 1rem;
@@ -36,10 +36,13 @@
  }
 
  &__imageContainer{
-  padding: 1rem 0 1.5rem 0;
+  
 
   &--image {
     width: 20rem;
+    padding: 1rem 0 1.5rem 0;
   }
 }
 }
+
+ 
