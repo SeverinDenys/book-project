@@ -6,6 +6,7 @@
   background:$analogous-main-color2;
   color: $main-color;
   padding: 2rem 0;
+  border-radius: 1.5rem;
 
    &__title  {
      padding-top: 1rem;
@@ -16,6 +17,11 @@
    &__author  {
      padding: 1rem 0;
     font-size: 3rem;
+  }
+
+   &__categories  {
+     padding: 1rem 0;
+    font-size: 2.5rem;
   }
 
   &__description {
@@ -41,6 +47,8 @@
   &--image {
     width: 20rem;
     padding: 1rem 0 1.5rem 0;
+    margin: 2rem 0 3rem 0;
+    box-shadow: 0px 0px 10px 1px black;
   }
 }
 }

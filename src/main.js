@@ -23,50 +23,8 @@ inputBtn.addEventListener("click", (e) => {
         console.log(userData);
 
         // SEARCH FOR THE BOOK FUNCTIONALITY
-
         const bookContainer = document.getElementById("book-container");
         const bookItems = userData.items;
-        const bookAuthor = bookItems[0].volumeInfo.authors;
-        const bookTitle = bookItems[0].volumeInfo.title;
-        const bookImg = bookItems[0].volumeInfo.imageLinks.thumbnail;
-        const bookDescription = bookItems[0].volumeInfo.description;
-        const bookPageCount = `${bookItems[0].volumeInfo.pageCount} pages`;
-
-        // create a bookInfoContainer
-        const bookInfoContainer = document.createElement("div");
-        bookInfoContainer.classList.add("bookInfo");
-
-        // create bookInfoTitle
-        const bookInfoTitle = document.createElement("h1");
-        bookInfoTitle.classList.add("bookInfo__title");
-        bookInfoTitle.innerText = bookTitle;
-        bookInfoContainer.appendChild(bookInfoTitle);
-
-        // create bookInfoAuthor
-        const bookInfoAuthor = document.createElement("h2");
-        bookInfoAuthor.classList.add("bookInfo__author");
-        bookInfoAuthor.innerText = bookAuthor;
-        bookInfoContainer.appendChild(bookInfoAuthor);
-
-        // create bookInfoImage
-        const bookInfoImg = document.createElement("img");
-        bookInfoImg.classList.add("bookInfo__imageContainer--image");
-        bookInfoImg.src = bookImg;
-        bookInfoContainer.appendChild(bookInfoImg);
-
-        // create bookInfoDescription
-        const bookInfoDescription = document.createElement("h2");
-        bookInfoDescription.classList.add("bookInfo__description");
-        bookInfoDescription.innerText = bookDescription;
-        bookInfoContainer.appendChild(bookInfoDescription);
-
-        // create bookInfoPages
-        const bookInfoPages = document.createElement("h3");
-        bookInfoPages.classList.add("bookInfo__pageCount");
-        bookInfoPages.innerText = bookPageCount;
-        bookInfoContainer.appendChild(bookInfoPages);
-
-        bookContainer.appendChild(bookInfoContainer);
 
         // filter english language books
 
@@ -81,6 +39,25 @@ inputBtn.addEventListener("click", (e) => {
           filteredEnglishBooks.map((englishBook) => {
             const booksContainer = document.createElement("div");
             booksContainer.classList.add("bookInfo");
+
+            //create book Title
+            const bookTitle = document.createElement("h1");
+            bookTitle.classList.add("bookInfo__title");
+            bookTitle.innerText = englishBook.volumeInfo.title;
+            booksContainer.appendChild(bookTitle);
+
+            //create book Author
+            const bookAuthor = document.createElement("h1");
+            bookAuthor.classList.add("bookInfo__author");
+            bookAuthor.innerText = englishBook.volumeInfo.authors;
+            booksContainer.appendChild(bookAuthor);
+
+            //create book categories
+            const bookCategories = document.createElement("p");
+            bookCategories.classList.add("bookInfo__categories");
+            bookCategories.innerText = englishBook.volumeInfo.categories;
+            booksContainer.appendChild(bookCategories);
+
             //create image Element
             let imgElement = document.createElement("img");
             imgElement.classList.add("bookInfo__imageContainer--image");
@@ -92,6 +69,24 @@ inputBtn.addEventListener("click", (e) => {
             bookDescription.innerText = englishBook.volumeInfo.description;
             bookDescription.classList.add("bookInfo__description");
             booksContainer.appendChild(bookDescription);
+
+            const reduceBookDescription = (description) => {
+              const maxLength = 200;
+              if (description.length > maxLength) {
+                return description.substring(0, maxLength) + ` ...`;
+              } else {
+                return description;
+              }
+            };
+
+            const reducedBookDescription = reduceBookDescription(bookDescription.innerText);
+            bookDescription.innerText = reducedBookDescription;
+
+            // create pagesCount
+            const bookPagesCount = document.createElement("h3");
+            bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
+            bookPagesCount.classList.add("bookInfo__pageCount");
+            booksContainer.appendChild(bookPagesCount);
 
             bookContainer.appendChild(booksContainer);
           });
