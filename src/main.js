@@ -1,8 +1,16 @@
 import "./styles/main.scss";
 const apiKey = import.meta.env.VITE_API_KEY;
-
 const inputBtn = document.getElementById("form__button");
 
+// create a star rating system
+// const stars = document.querySelectorAll(".stars-container__star");
+// stars.forEach((star, index) => {
+//   star.addEventListener("click", () => {
+//     stars.forEach((star, index1) => {
+//       index >= index1 ? star.classList.add("active") : star.classList.remove("active");
+//     });
+//   });
+// });
 // display the input API request
 
 inputBtn.addEventListener("click", (e) => {
@@ -87,6 +95,39 @@ inputBtn.addEventListener("click", (e) => {
             bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
             bookPagesCount.classList.add("bookInfo__pageCount");
             booksContainer.appendChild(bookPagesCount);
+
+            // create star rating system start
+            const ratingContainer = document.createElement("div");
+            ratingContainer.classList.add("rating-container");
+
+            const header = document.createElement("p");
+            header.classList.add("rating-container__text");
+            header.innerText = "Rate this book?";
+            ratingContainer.appendChild(header);
+
+            const starsContainer = document.createElement("div");
+            starsContainer.classList.add("star-container");
+            ratingContainer.appendChild(starsContainer);
+
+            for (let i = 0; i < 5; i++) {
+              const star = document.createElement("span");
+              star.classList.add("stars-container__star");
+              star.innerText = "★";
+              starsContainer.appendChild(star);
+            }
+
+            // Add the star rating functionality
+            const stars = document.querySelectorAll(".stars-container__star");
+            stars.forEach((star, index) => {
+              star.addEventListener("click", () => {
+                stars.forEach((star, index1) => {
+                  index >= index1 ? star.classList.add("active") : star.classList.remove("active");
+                });
+              });
+            });
+
+            booksContainer.appendChild(ratingContainer);
+            // create star rating system end
 
             bookContainer.appendChild(booksContainer);
           });
