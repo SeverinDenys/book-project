@@ -110,14 +110,14 @@ inputBtn.addEventListener("click", (e) => {
             ratingContainer.appendChild(starsContainer);
 
             for (let i = 0; i < 5; i++) {
-              const star = document.createElement("span");
-              star.classList.add("stars-container__star");
-              star.innerText = "★";
-              starsContainer.appendChild(star);
+              const starItem = document.createElement("span");
+              starItem.classList.add("stars-container__star");
+              starItem.innerText = "★";
+              starsContainer.appendChild(starItem);
             }
 
             // Add the star rating functionality
-            const stars = document.querySelectorAll(".stars-container__star");
+            const stars = starsContainer.querySelectorAll(".stars-container__star");
             stars.forEach((star, index) => {
               star.addEventListener("click", () => {
                 stars.forEach((star, index1) => {
@@ -127,8 +127,43 @@ inputBtn.addEventListener("click", (e) => {
             });
 
             booksContainer.appendChild(ratingContainer);
+
             // create star rating system end
 
+            // create review form start
+
+            const formReviewContainer = document.createElement("div");
+
+            const formReview = document.createElement("form");
+            formReview.classList.add("form-review");
+            const formTextarea = document.createElement("div");
+            formTextarea.classList.add("textarea");
+            const textAreaText = document.createElement("textarea");
+            textAreaText.placeholder = "Describe your experience";
+            textAreaText.cols = 30;
+            textAreaText.classList.add("textarea__text");
+            formTextarea.appendChild(textAreaText);
+
+            formReview.appendChild(formTextarea);
+
+            const formReviewBtnHolder = document.createElement("div");
+            formReviewBtnHolder.classList.add("form-review__btnHolder");
+
+            const reviewBtn = document.createElement("button");
+            reviewBtn.classList.add("btn");
+            reviewBtn.type = "submit";
+            reviewBtn.innerText = "Post";
+            formReviewBtnHolder.appendChild(reviewBtn);
+
+            formReview.appendChild(formReviewBtnHolder);
+            formReviewContainer.appendChild(formReview);
+            formReviewContainer;
+
+            booksContainer.appendChild(formReviewContainer);
+
+            // create user experience form end
+
+            // append all the information inside one main container
             bookContainer.appendChild(booksContainer);
           });
         };

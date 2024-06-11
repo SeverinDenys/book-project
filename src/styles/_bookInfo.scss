@@ -4,9 +4,9 @@
   }
   @media only screen and (min-width: 1024px) {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 3rem;
-   
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 2rem;
+    
     margin: 2rem auto 0;
     max-width: 130rem;
   }
@@ -22,6 +22,7 @@
       color: $main-color;
       padding: 2rem 0;
       border-radius: 1.5rem;
+     
     
       @media only screen and (min-width: 1024px) {
         margin-left: 1rem;
@@ -95,12 +96,9 @@
 }
 
 .rating-container {
-  // background: $main-color;
   padding: 1.5rem 0;
-  border-radius: 1.5rem;
-  
-  
   text-align: center;
+
   &__text {
     font-size: 2.5rem;
     font-weight: 700;
@@ -117,6 +115,46 @@
 
       &.active {
         color: $star-gold;
+      }
+    }
+  }
+}
+
+// form user experience 
+
+.form-review {
+  text-align: center;
+  .textarea {
+    height: 10rem;
+    width: 100%;
+    overflow: hidden;
+
+    &__text {
+      height: 100%;
+      width: 100%;
+      background:$main-color;
+      padding: 1rem;
+      font-size: 1.7rem;
+      color:$analogous-main-color1;
+    }
+  }
+
+  .form-review__btnHolder {
+    height: 4.5rem;
+    width: 100%;
+    margin: 1.5rem 0;
+
+    .btn {
+      height: 100%;
+      width: 100%;
+      outline: none;
+      font-size: 2rem;
+      text-transform: uppercase;
+      cursor: pointer;
+
+      &:hover {
+        background: grey;
+        color: $main-color;
       }
     }
   }
