@@ -2,15 +2,6 @@ import "./styles/main.scss";
 const apiKey = import.meta.env.VITE_API_KEY;
 const inputBtn = document.getElementById("form__button");
 
-// create a star rating system
-// const stars = document.querySelectorAll(".stars-container__star");
-// stars.forEach((star, index) => {
-//   star.addEventListener("click", () => {
-//     stars.forEach((star, index1) => {
-//       index >= index1 ? star.classList.add("active") : star.classList.remove("active");
-//     });
-//   });
-// });
 // display the input API request
 
 inputBtn.addEventListener("click", (e) => {
@@ -37,7 +28,7 @@ inputBtn.addEventListener("click", (e) => {
         // filter english language books
 
         const filteredEnglishBooks = bookItems.filter((englishBook) => {
-          return englishBook.volumeInfo.language === "en";
+          return (englishBook.volumeInfo.language === "en") & (englishBook.volumeInfo.pageCount > 0);
         });
 
         console.log(filteredEnglishBooks);
@@ -72,23 +63,11 @@ inputBtn.addEventListener("click", (e) => {
             imgElement.src = englishBook.volumeInfo.imageLinks.thumbnail;
             booksContainer.appendChild(imgElement);
 
-            // create description
-            const bookDescription = document.createElement("h2");
-            bookDescription.innerText = englishBook.volumeInfo.description;
-            bookDescription.classList.add("bookInfo__description");
-            booksContainer.appendChild(bookDescription);
-
-            const reduceBookDescription = (description) => {
-              const maxLength = 200;
-              if (description.length > maxLength) {
-                return description.substring(0, maxLength) + ` ...`;
-              } else {
-                return description;
-              }
-            };
-
-            const reducedBookDescription = reduceBookDescription(bookDescription.innerText);
-            bookDescription.innerText = reducedBookDescription;
+            // create bookSnippet
+            const bookSnippet = document.createElement("h2");
+            bookSnippet.innerText = englishBook.searchInfo.textSnippet;
+            bookSnippet.classList.add("bookInfo__snippet");
+            booksContainer.appendChild(bookSnippet);
 
             // create pagesCount
             const bookPagesCount = document.createElement("h3");
@@ -109,6 +88,7 @@ inputBtn.addEventListener("click", (e) => {
             starsContainer.classList.add("star-container");
             ratingContainer.appendChild(starsContainer);
 
+            // rewrite using map and filter start
             for (let i = 0; i < 5; i++) {
               const starItem = document.createElement("span");
               starItem.classList.add("stars-container__star");
@@ -125,6 +105,7 @@ inputBtn.addEventListener("click", (e) => {
                 });
               });
             });
+            // rewrite using map and filter end
 
             booksContainer.appendChild(ratingContainer);
 
