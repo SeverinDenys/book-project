@@ -88,24 +88,26 @@ inputBtn.addEventListener("click", (e) => {
             starsContainer.classList.add("star-container");
             ratingContainer.appendChild(starsContainer);
 
-            // rewrite using map and filter start
-            for (let i = 0; i < 5; i++) {
+            
+            // new version of creating star rating using map
+            const starsItems = ["", "", "", "", ""];
+            starsItems.map(() => {
               const starItem = document.createElement("span");
               starItem.classList.add("stars-container__star");
               starItem.innerText = "★";
               starsContainer.appendChild(starItem);
-            }
+            });
 
-            // Add the star rating functionality
+            // Add the star rating functionality using map
             const stars = starsContainer.querySelectorAll(".stars-container__star");
-            stars.forEach((star, index) => {
+            const starArray = [...stars];
+            starArray.map((star, index) => {
               star.addEventListener("click", () => {
-                stars.forEach((star, index1) => {
+                starArray.map((star, index1) => {
                   index >= index1 ? star.classList.add("active") : star.classList.remove("active");
                 });
               });
             });
-            // rewrite using map and filter end
 
             booksContainer.appendChild(ratingContainer);
 
