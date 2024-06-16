@@ -28,7 +28,7 @@ inputBtn.addEventListener("click", (e) => {
         // filter english language books
 
         const filteredEnglishBooks = bookItems.filter((englishBook) => {
-          return (englishBook.volumeInfo.language === "en") & (englishBook.volumeInfo.pageCount > 0);
+          return englishBook.volumeInfo.language === "en" && englishBook.volumeInfo.pageCount > 0;
         });
 
         console.log(filteredEnglishBooks);
@@ -75,76 +75,107 @@ inputBtn.addEventListener("click", (e) => {
             bookPagesCount.classList.add("bookInfo__pageCount");
             booksContainer.appendChild(bookPagesCount);
 
-            // create star rating system start
-            const ratingContainer = document.createElement("div");
-            ratingContainer.classList.add("rating-container");
+            booksContainer.addEventListener("click", () => {
+              const description = booksContainer.querySelector(".bookInfo__description");
+              const publishedDate = booksContainer.querySelector(".bookInfo__publishedDate");
+              const publisher = booksContainer.querySelector(".bookInfo__publisher");
+              const ratingHolder = booksContainer.querySelector(".rating-container");
+              const formReviewHolder = booksContainer.querySelector(".form-review");
+              if (description && publishedDate && publisher && ratingHolder && formReviewHolder) {
+                description.remove();
+                publishedDate.remove();
+                publisher.remove();
+                ratingHolder.remove();
+                formReviewHolder.remove();
+              } else {
+                // create description
+                const bookDescription = document.createElement("p");
+                bookDescription.innerText = englishBook.volumeInfo.description;
+                bookDescription.classList.add("bookInfo__description");
+                booksContainer.appendChild(bookDescription);
 
-            const header = document.createElement("p");
-            header.classList.add("rating-container__text");
-            header.innerText = "Rate this book?";
-            ratingContainer.appendChild(header);
+                // create published date
+                const bookPublishedDate = document.createElement("p");
+                bookPublishedDate.innerText = englishBook.volumeInfo.publishedDate;
+                bookPublishedDate.classList.add("bookInfo__publishedDate");
+                booksContainer.appendChild(bookPublishedDate);
 
-            const starsContainer = document.createElement("div");
-            starsContainer.classList.add("star-container");
-            ratingContainer.appendChild(starsContainer);
+                // create published date
+                const bookPublisher = document.createElement("p");
+                bookPublisher.innerText = englishBook.volumeInfo.publisher;
+                bookPublisher.classList.add("bookInfo__publisher");
+                booksContainer.appendChild(bookPublisher);
 
-            
-            // new version of creating star rating using map
-            const starsItems = ["", "", "", "", ""];
-            starsItems.map(() => {
-              const starItem = document.createElement("span");
-              starItem.classList.add("stars-container__star");
-              starItem.innerText = "★";
-              starsContainer.appendChild(starItem);
-            });
+                // create star rating system start
+                const ratingContainer = document.createElement("div");
+                ratingContainer.classList.add("rating-container");
 
-            // Add the star rating functionality using map
-            const stars = starsContainer.querySelectorAll(".stars-container__star");
-            const starArray = [...stars];
-            starArray.map((star, index) => {
-              star.addEventListener("click", () => {
-                starArray.map((star, index1) => {
-                  index >= index1 ? star.classList.add("active") : star.classList.remove("active");
+                const header = document.createElement("p");
+                header.classList.add("rating-container__text");
+                header.innerText = "Rate this book?";
+                ratingContainer.appendChild(header);
+
+                const starsContainer = document.createElement("div");
+                starsContainer.classList.add("star-container");
+                ratingContainer.appendChild(starsContainer);
+
+                // new version of creating star rating using map
+                const starsItems = ["", "", "", "", ""];
+                starsItems.map(() => {
+                  const starItem = document.createElement("span");
+                  starItem.classList.add("stars-container__star");
+                  starItem.innerText = "★";
+                  starsContainer.appendChild(starItem);
                 });
-              });
+
+                // Add the star rating functionality using map
+                const stars = starsContainer.querySelectorAll(".stars-container__star");
+                const starArray = [...stars];
+                starArray.map((star, index) => {
+                  star.addEventListener("click", () => {
+                    starArray.map((star, index1) => {
+                      index >= index1 ? star.classList.add("active") : star.classList.remove("active");
+                    });
+                  });
+                });
+
+                booksContainer.appendChild(ratingContainer);
+
+                // create star rating system end
+
+                // create review form start
+
+                const formReviewContainer = document.createElement("div");
+
+                const formReview = document.createElement("form");
+                formReview.classList.add("form-review");
+                const formTextarea = document.createElement("div");
+                formTextarea.classList.add("textarea");
+                const textAreaText = document.createElement("textarea");
+                textAreaText.placeholder = "Describe your experience";
+                textAreaText.cols = 30;
+                textAreaText.classList.add("textarea__text");
+                formTextarea.appendChild(textAreaText);
+
+                formReview.appendChild(formTextarea);
+
+                const formReviewBtnHolder = document.createElement("div");
+                formReviewBtnHolder.classList.add("form-review__btnHolder");
+
+                const reviewBtn = document.createElement("button");
+                reviewBtn.classList.add("btn");
+                reviewBtn.type = "submit";
+                reviewBtn.innerText = "Post";
+                formReviewBtnHolder.appendChild(reviewBtn);
+
+                formReview.appendChild(formReviewBtnHolder);
+                formReviewContainer.appendChild(formReview);
+                formReviewContainer;
+
+                booksContainer.appendChild(formReviewContainer);
+              }
+              // create user experience form end
             });
-
-            booksContainer.appendChild(ratingContainer);
-
-            // create star rating system end
-
-            // create review form start
-
-            const formReviewContainer = document.createElement("div");
-
-            const formReview = document.createElement("form");
-            formReview.classList.add("form-review");
-            const formTextarea = document.createElement("div");
-            formTextarea.classList.add("textarea");
-            const textAreaText = document.createElement("textarea");
-            textAreaText.placeholder = "Describe your experience";
-            textAreaText.cols = 30;
-            textAreaText.classList.add("textarea__text");
-            formTextarea.appendChild(textAreaText);
-
-            formReview.appendChild(formTextarea);
-
-            const formReviewBtnHolder = document.createElement("div");
-            formReviewBtnHolder.classList.add("form-review__btnHolder");
-
-            const reviewBtn = document.createElement("button");
-            reviewBtn.classList.add("btn");
-            reviewBtn.type = "submit";
-            reviewBtn.innerText = "Post";
-            formReviewBtnHolder.appendChild(reviewBtn);
-
-            formReview.appendChild(formReviewBtnHolder);
-            formReviewContainer.appendChild(formReview);
-            formReviewContainer;
-
-            booksContainer.appendChild(formReviewContainer);
-
-            // create user experience form end
 
             // append all the information inside one main container
             bookContainer.appendChild(booksContainer);
