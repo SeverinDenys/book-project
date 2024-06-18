@@ -6,9 +6,34 @@ const inputBtn = document.getElementById("form__button");
 
 inputBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  const inputElValue = document.querySelector(".form__input").value;
+  const inputEl = document.querySelector(".form__input");
+  const inputElValue = inputEl.value;
   const booksUrl = `https://www.googleapis.com/books/v1/volumes?q=${inputElValue}&key=${apiKey}`;
 
+  // check validity of btn input
+  const checkBtnValidity = () => {
+    const pattern = /^[A-Za-z]+$/;
+    if (!pattern.test(inputElValue)) {
+      inputEl.style.setProperty("border", "2px solid red", "important");
+      inputEl.value = "";
+      inputEl.placeholder = "Wrong title";
+    } else if (inputElValue.charAt(0) !== inputElValue.charAt(0).toUpperCase()) {
+      inputEl.style.setProperty("border", "2px solid red", "important");
+      inputEl.value = ""; // Clear the input value
+      inputEl.placeholder = "Use capital letter";
+    } else {
+      inputEl.style.setProperty("border", "none");
+      inputEl.value = ""; // Clear the input value
+      inputEl.placeholder = "Search for the book";
+      return true;
+    }
+  };
+
+  if (!checkBtnValidity()) {
+    return; // exit if the input is invalid
+  }
+
+  // main book project functionality
   const booksInformation = async () => {
     await fetch(booksUrl)
       .then((response) => {
@@ -27,6 +52,7 @@ inputBtn.addEventListener("click", (e) => {
 
         // filter english language books
 
+        bookContainer.innerText = "";
         const filteredEnglishBooks = bookItems.filter((englishBook) => {
           return englishBook.volumeInfo.language === "en" && englishBook.volumeInfo.pageCount > 0;
         });
