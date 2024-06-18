@@ -20,11 +20,11 @@ inputBtn.addEventListener("click", (e) => {
       inputEl.placeholder = "Wrong title";
     } else if (inputElValue.charAt(0) !== inputElValue.charAt(0).toUpperCase()) {
       inputEl.style.setProperty("border", "2px solid red", "important");
-      inputEl.value = ""; // Clear the input value
+      inputEl.value = "";
       inputEl.placeholder = "Use capital letter";
     } else {
       inputEl.style.setProperty("border", "none");
-      inputEl.value = ""; // Clear the input value
+      inputEl.value = "";
       inputEl.placeholder = "Search for the book";
       return true;
     }
@@ -100,11 +100,17 @@ inputBtn.addEventListener("click", (e) => {
             bookContainer.appendChild(booksContainerHolder);
 
             // create "showMoreBtn"
+            // how to rewrite this part of code start //
 
-            const moreItemsBtn = document.createElement("button");
-            moreItemsBtn.classList.add("button-more"); // Add the correct class name
-            moreItemsBtn.innerText = "Show more";
-            container.appendChild(moreItemsBtn);
+            let moreItemsBtn = document.querySelector(".button-more");
+            if (!moreItemsBtn) {
+              let moreItemsBtn = document.createElement("button");
+              moreItemsBtn.classList.add("button-more");
+              moreItemsBtn.innerText = "Show more";
+              container.appendChild(moreItemsBtn);
+            }
+
+            // how to rewrite this part of code end //
           } else {
             alert("There are no english books");
           }
