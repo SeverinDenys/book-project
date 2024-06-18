@@ -31,4 +31,21 @@
      color: $analogous-main-color1;
      border-radius:1rem;
   }
+ 
+ 
+}
+
+.button-more {
+  padding: 1rem;
+  font-size: 2.7rem;
+  font-style: italic;
+  background: #fff;
+  border: none;
+  color: #79765f;
+  border-radius: 1rem;
+  margin: 0 auto 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30rem;
 }

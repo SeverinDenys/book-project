@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 
 text.txt
+additions.txt
 .env
 .gitignore
