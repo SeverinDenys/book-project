@@ -2,8 +2,7 @@ import "./styles/main.scss";
 const apiKey = import.meta.env.VITE_API_KEY;
 const inputBtn = document.getElementById("form__button");
 const container = document.querySelector(".container");
-
-// display the input API request
+const multipleContainer = document.querySelector(".book-container-multiple");
 
 inputBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -11,30 +10,30 @@ inputBtn.addEventListener("click", (e) => {
   const inputElValue = inputEl.value;
   const booksUrl = `https://www.googleapis.com/books/v1/volumes?q=${inputElValue}&key=${apiKey}`;
 
-  // check validity of btn input
   const checkBtnValidity = () => {
     const pattern = /^[A-Za-z]+$/;
+
     if (!pattern.test(inputElValue)) {
       inputEl.style.setProperty("border", "2px solid red", "important");
       inputEl.value = "";
       inputEl.placeholder = "Wrong title";
+      return false;
     } else if (inputElValue.charAt(0) !== inputElValue.charAt(0).toUpperCase()) {
       inputEl.style.setProperty("border", "2px solid red", "important");
       inputEl.value = "";
       inputEl.placeholder = "Use capital letter";
+      return false;
     } else {
       inputEl.style.setProperty("border", "none");
-      inputEl.value = "";
       inputEl.placeholder = "Search for the book";
       return true;
     }
   };
 
   if (!checkBtnValidity()) {
-    return; // exit if the input is invalid
+    return;
   }
 
-  // main book project functionality
   const booksInformation = async () => {
     await fetch(booksUrl)
       .then((response) => {
@@ -44,136 +43,113 @@ inputBtn.addEventListener("click", (e) => {
         return response.json();
       })
       .then((userData) => {
-        // Process the retrieved user data
         console.log(userData);
-
-        // SEARCH FOR THE BOOK FUNCTIONALITY
         const bookContainer = document.getElementById("book-container");
-        const bookContainerMultiple = document.querySelector(".book-container-multiple");
         const bookItems = userData.items;
 
         bookContainer.innerText = "";
 
-        // showing the book from inputValue
         const showInputValueBook = () => {
-          // find first object in english
           let englishObject = bookItems.find((englishItem) => englishItem.volumeInfo.language === "en");
 
           if (englishObject) {
             const booksContainerHolder = document.createElement("div");
             booksContainerHolder.classList.add("bookInfo");
 
-            // create book Title
             const bookInfoTitle = document.createElement("h1");
             bookInfoTitle.classList.add("bookInfo__title");
             bookInfoTitle.innerText = englishObject.volumeInfo.title;
             booksContainerHolder.appendChild(bookInfoTitle);
 
-            //create book Author
             const bookInfoAuthor = document.createElement("h1");
             bookInfoAuthor.classList.add("bookInfo__author");
             bookInfoAuthor.innerText = englishObject.volumeInfo.authors;
             booksContainerHolder.appendChild(bookInfoAuthor);
 
-            //create book categories
             const bookInfoCategories = document.createElement("p");
             bookInfoCategories.classList.add("bookInfo__categories");
             bookInfoCategories.innerText = englishObject.volumeInfo.categories;
             booksContainerHolder.appendChild(bookInfoCategories);
 
-            //create image Element
             let imgInfoElement = document.createElement("img");
             imgInfoElement.classList.add("bookInfo__imageContainer--image");
             imgInfoElement.src = englishObject.volumeInfo.imageLinks.thumbnail;
             booksContainerHolder.appendChild(imgInfoElement);
 
-            // create bookSnippet
             const bookInfoSnippet = document.createElement("h2");
             bookInfoSnippet.innerText = englishObject.searchInfo.textSnippet;
             bookInfoSnippet.classList.add("bookInfo__snippet");
             booksContainerHolder.appendChild(bookInfoSnippet);
 
-            // create pagesCount
             const bookInfoPagesCount = document.createElement("h3");
             bookInfoPagesCount.innerText = `${englishObject.volumeInfo.pageCount} pages`;
             bookInfoPagesCount.classList.add("bookInfo__pageCount");
             booksContainerHolder.appendChild(bookInfoPagesCount);
             bookContainer.appendChild(booksContainerHolder);
 
-            // create "showMoreBtn"
-            // how to rewrite this part of code start //
-
             let moreItemsBtn = document.querySelector(".button-more");
             if (!moreItemsBtn) {
-              let moreItemsBtn = document.createElement("button");
+              moreItemsBtn = document.createElement("button");
               moreItemsBtn.classList.add("button-more");
               moreItemsBtn.innerText = "Show more";
               container.appendChild(moreItemsBtn);
             }
 
-            // how to rewrite this part of code end //
+            moreItemsBtn.addEventListener("click", () => {
+              bookContainer.innerText = "";
+
+              const filteredEnglishBooks = bookItems.filter((englishBook) => {
+                return englishBook.volumeInfo.language === "en" && englishBook.volumeInfo.pageCount > 0;
+              });
+
+              console.log(filteredEnglishBooks);
+
+              const mappedBooksInEnglish = () => {
+                filteredEnglishBooks.map((englishBook) => {
+                  const booksContainer = document.createElement("div");
+                  booksContainer.classList.add("bookInfo");
+
+                  const bookTitle = document.createElement("h1");
+                  bookTitle.classList.add("bookInfo__title");
+                  bookTitle.innerText = englishBook.volumeInfo.title;
+                  booksContainer.appendChild(bookTitle);
+
+                  const bookAuthor = document.createElement("h1");
+                  bookAuthor.classList.add("bookInfo__author");
+                  bookAuthor.innerText = englishBook.volumeInfo.authors;
+                  booksContainer.appendChild(bookAuthor);
+
+                  const bookCategories = document.createElement("p");
+                  bookCategories.classList.add("bookInfo__categories");
+                  bookCategories.innerText = englishBook.volumeInfo.categories;
+                  booksContainer.appendChild(bookCategories);
+
+                  let imgElement = document.createElement("img");
+                  imgElement.classList.add("bookInfo__imageContainer--image");
+                  imgElement.src = englishBook.volumeInfo.imageLinks.thumbnail;
+                  booksContainer.appendChild(imgElement);
+
+                  const bookSnippet = document.createElement("h2");
+                  bookSnippet.innerText = englishBook.searchInfo.textSnippet;
+                  bookSnippet.classList.add("bookInfo__snippet");
+                  booksContainer.appendChild(bookSnippet);
+
+                  const bookPagesCount = document.createElement("h3");
+                  bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
+                  bookPagesCount.classList.add("bookInfo__pageCount");
+                  booksContainer.appendChild(bookPagesCount);
+
+                  bookContainer.appendChild(booksContainer); // if replace bookContainer to multipleContainer nothing will work!
+                });
+              };
+              mappedBooksInEnglish();
+              // moreItemsBtn.style.display = "none";
+            });
           } else {
-            alert("There are no english books");
+            alert("There are no English books");
           }
         };
         showInputValueBook();
-
-        // filter english language books
-
-        // bookContainer.innerText = "";
-        // const filteredEnglishBooks = bookItems.filter((englishBook) => {
-        //   return englishBook.volumeInfo.language === "en" && englishBook.volumeInfo.pageCount > 0;
-        // });
-
-        // console.log(filteredEnglishBooks);
-
-        // // mapping individual books in english
-        // const mappedBooksInEnglish = () => {
-        //   filteredEnglishBooks.map((englishBook) => {
-        //     const booksContainer = document.createElement("div");
-        //     booksContainer.classList.add("bookInfo");
-
-        //     //create book Title
-        //     const bookTitle = document.createElement("h1");
-        //     bookTitle.classList.add("bookInfo__title");
-        //     bookTitle.innerText = englishBook.volumeInfo.title;
-        //     booksContainer.appendChild(bookTitle);
-
-        //     //create book Author
-        //     const bookAuthor = document.createElement("h1");
-        //     bookAuthor.classList.add("bookInfo__author");
-        //     bookAuthor.innerText = englishBook.volumeInfo.authors;
-        //     booksContainer.appendChild(bookAuthor);
-
-        //     //create book categories
-        //     const bookCategories = document.createElement("p");
-        //     bookCategories.classList.add("bookInfo__categories");
-        //     bookCategories.innerText = englishBook.volumeInfo.categories;
-        //     booksContainer.appendChild(bookCategories);
-
-        //     //create image Element
-        //     let imgElement = document.createElement("img");
-        //     imgElement.classList.add("bookInfo__imageContainer--image");
-        //     imgElement.src = englishBook.volumeInfo.imageLinks.thumbnail;
-        //     booksContainer.appendChild(imgElement);
-
-        //     // create bookSnippet
-        //     const bookSnippet = document.createElement("h2");
-        //     bookSnippet.innerText = englishBook.searchInfo.textSnippet;
-        //     bookSnippet.classList.add("bookInfo__snippet");
-        //     booksContainer.appendChild(bookSnippet);
-
-        //     // create pagesCount
-        //     const bookPagesCount = document.createElement("h3");
-        //     bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
-        //     bookPagesCount.classList.add("bookInfo__pageCount");
-        //     booksContainer.appendChild(bookPagesCount);
-
-        //     // append all the information inside one main container
-        //     bookContainer.appendChild(booksContainer);
-        //   });
-        // };
-        // mappedBooksInEnglish();
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -183,8 +159,6 @@ inputBtn.addEventListener("click", (e) => {
   booksInformation();
   resetInput();
 });
-
-// additional functions
 
 const resetInput = () => {
   document.querySelector(".form__input").value = "";
