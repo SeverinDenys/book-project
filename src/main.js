@@ -49,6 +49,7 @@ inputBtn.addEventListener("click", (e) => {
 
         // SEARCH FOR THE BOOK FUNCTIONALITY
         const bookContainer = document.getElementById("book-container");
+        const bookContainerMultiple = document.querySelector(".book-container-multiple");
         const bookItems = userData.items;
 
         bookContainer.innerText = "";
@@ -167,46 +168,6 @@ inputBtn.addEventListener("click", (e) => {
         //     bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
         //     bookPagesCount.classList.add("bookInfo__pageCount");
         //     booksContainer.appendChild(bookPagesCount);
-
-        //     booksContainer.addEventListener("click", () => {
-        //       const description = booksContainer.querySelector(".bookInfo__description");
-        //       const publishedDate = booksContainer.querySelector(".bookInfo__publishedDate");
-        //       const publisher = booksContainer.querySelector(".bookInfo__publisher");
-        //       // const ratingHolder = booksContainer.querySelector(".rating-container");
-        //       // const formReviewHolder = booksContainer.querySelector(".form-review");
-        //       if (description && publishedDate && publisher) {
-        //         description.remove();
-        //         publishedDate.remove();
-        //         publisher.remove();
-        //       } else {
-        //         // create description
-        //         const bookDescription = document.createElement("p");
-        //         bookDescription.innerText = englishBook.volumeInfo.description;
-        //         bookDescription.classList.add("bookInfo__description");
-        //         booksContainer.appendChild(bookDescription);
-
-        //         // create published date
-        //         const bookPublishedDate = document.createElement("p");
-        //         bookPublishedDate.innerText = englishBook.volumeInfo.publishedDate;
-        //         bookPublishedDate.classList.add("bookInfo__publishedDate");
-        //         booksContainer.appendChild(bookPublishedDate);
-
-        //         // create published date
-        //         const bookPublisher = document.createElement("p");
-        //         bookPublisher.innerText = englishBook.volumeInfo.publisher;
-        //         bookPublisher.classList.add("bookInfo__publisher");
-        //         booksContainer.appendChild(bookPublisher);
-
-        //         // create star rating system start
-        //         const ratingContainer = document.createElement("div");
-        //         ratingContainer.classList.add("rating-container");
-
-        //         const header = document.createElement("p");
-        //         header.classList.add("rating-container__text");
-        //         header.innerText = "Rate this book?";
-        //         ratingContainer.appendChild(header);
-        //       }
-        //     });
 
         //     // append all the information inside one main container
         //     bookContainer.appendChild(booksContainer);
