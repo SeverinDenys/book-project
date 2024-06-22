@@ -4,24 +4,29 @@
   align-items: center;
   // height: 100vh; // Makes sure the container takes the full viewport height
 }
- 
- 
+
+
 .form {
   display: flex;
   flex-direction: column;
- 
+
   &__input {
     border: none;
     margin-bottom: 1rem;
-   
+
     font-size: 2.7rem;
     font-style: italic;
     border-radius:1rem;
     color: $analogous-main-color1;
     text-align: center;
     padding: 1.2rem 0 1.2rem 0;
+
+    &:focus {
+      outline: none;
+      border: 2px solid $main-color;
+    }
   }
- 
+
   &__button {
     padding: 1rem;
      font-size: 2.7rem;
@@ -32,8 +37,6 @@
      border-radius:1rem;
      cursor: pointer;
   }
- 
- 
 }
 
 .button-more {
