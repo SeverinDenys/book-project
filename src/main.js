@@ -15,7 +15,7 @@ searchForm.addEventListener("submit", async (e) => {
   if (searchTerm && checkInputValidity(searchTerm)) {
     singleBookContainer.innerHTML = "";
     multipleBookContainer.innerHTML = "";
-    showMoreButton.style.display = "none";
+    showMoreButton.classList.remove("visible");
     await fetchBooks(searchTerm);
   }
 });
@@ -27,14 +27,14 @@ showMoreButton.addEventListener("click", () => {
 function checkInputValidity(input) {
   const pattern = /^[A-Z][a-zA-Z\s]*$/;
   if (!pattern.test(input)) {
-    searchInput.style.border = "2px solid red";
+    searchInput.classList.add("invalid");
     searchInput.value = "";
     searchInput.placeholder = input.charAt(0) !== input.charAt(0).toUpperCase()
       ? "Use capital letter"
       : "Invalid input";
     return false;
   }
-  searchInput.style.border = "none";
+  searchInput.classList.remove("invalid");
   searchInput.placeholder = "Search for the book";
   return true;
 }
@@ -48,14 +48,18 @@ async function fetchBooks(query) {
       allBooks = data.items.filter(book => book.volumeInfo.language === "en");
       displaySingleBook(allBooks[0]);
       if (allBooks.length > 1) {
-        showMoreButton.style.display = "block";
+        showMoreButton.classList.add("visible");
+      } else {
+        showMoreButton.classList.remove("visible");
       }
     } else {
       singleBookContainer.innerHTML = "<p>No books found.</p>";
+      showMoreButton.classList.remove("visible");
     }
   } catch (error) {
     console.error("Error:", error);
     singleBookContainer.innerHTML = "<p>An error occurred while fetching books.</p>";
+    showMoreButton.classList.remove("visible");
   }
 }
 
@@ -70,7 +74,7 @@ function displayMultipleBooks() {
     const bookElement = createBookElement(book, false);
     multipleBookContainer.appendChild(bookElement);
   });
-  showMoreButton.style.display = "none";
+  showMoreButton.classList.remove("visible");
 }
 
 function createBookElement(book, isSingle) {
@@ -98,5 +102,5 @@ function createBookElement(book, isSingle) {
 }
 
 searchInput.addEventListener('input', () => {
-  searchInput.style.border = 'none';
+  searchInput.classList.remove("invalid");
 });

@@ -2,9 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  // height: 100vh; // Makes sure the container takes the full viewport height
 }
-
 
 .form {
   display: flex;
@@ -13,10 +11,9 @@
   &__input {
     border: none;
     margin-bottom: 1rem;
-
     font-size: 2.7rem;
     font-style: italic;
-    border-radius:1rem;
+    border-radius: 1rem;
     color: $analogous-main-color1;
     text-align: center;
     padding: 1.2rem 0 1.2rem 0;
@@ -25,17 +22,21 @@
       outline: none;
       border: 2px solid $main-color;
     }
+
+    &.invalid {
+      border: 2px solid red;
+    }
   }
 
   &__button {
     padding: 1rem;
-     font-size: 2.7rem;
-     font-style: italic;
-     background: $main-color;
-     border: none;
-     color: $analogous-main-color1;
-     border-radius:1rem;
-     cursor: pointer;
+    font-size: 2.7rem;
+    font-style: italic;
+    background: $main-color;
+    border: none;
+    color: $analogous-main-color1;
+    border-radius: 1rem;
+    cursor: pointer;
   }
 }
 
@@ -48,9 +49,13 @@
   color: #79765f;
   border-radius: 1rem;
   margin: 0 auto 3rem;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
   width: 30rem;
-  cursor:pointer;
+  cursor: pointer;
+
+  &.visible {
+    display: flex;
+  }
 }
