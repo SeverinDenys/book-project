@@ -2,7 +2,28 @@ import "./styles/main.scss";
 const apiKey = import.meta.env.VITE_API_KEY;
 const inputBtn = document.getElementById("form__button");
 const container = document.querySelector(".container");
-const multipleContainer = document.querySelector(".book-container-multiple");
+let moreItemsBtn = document.querySelector(".button-more");
+let lessItemsBtn = document.querySelector(".button-less");
+let form = document.querySelector(".form");
+
+
+const createMoreItemsBtn = () => {
+  if (!moreItemsBtn) {
+    moreItemsBtn = document.createElement("button");
+    moreItemsBtn.classList.add("button-more");
+    moreItemsBtn.innerText = "Show more";
+    container.appendChild(moreItemsBtn);
+  }
+};
+
+const createLessItemsBtn = () => {
+  if (!lessItemsBtn) {
+    lessItemsBtn = document.createElement("button");
+    lessItemsBtn.classList.add("button-less");
+    lessItemsBtn.innerText = "Show less";
+    container.appendChild(lessItemsBtn);
+  }
+};
 
 inputBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -10,18 +31,26 @@ inputBtn.addEventListener("click", (e) => {
   const inputElValue = inputEl.value;
   const booksUrl = `https://www.googleapis.com/books/v1/volumes?q=${inputElValue}&key=${apiKey}`;
 
+  // Clear previous errors
+  const previousError = document.querySelector(".form__input-error");
+  if (previousError) {
+    previousError.remove();
+  }
+
   const checkBtnValidity = () => {
-    const pattern = /^[A-Za-z]+$/;
+    // Allow letters, spaces, and common punctuation characters
+    const pattern = /^[A-Za-z0-9\s.,'!]+$/;
+    const inputError = document.createElement("p");
+    inputError.classList.add("form__input-error");
 
     if (!pattern.test(inputElValue)) {
-      inputEl.style.setProperty("border", "2px solid red", "important");
-      inputEl.value = "";
-      inputEl.placeholder = "Wrong title";
+      inputError.innerText = "Wrong book title";
+      inputEl.insertAdjacentElement("afterend", inputError);
       return false;
     } else if (inputElValue.charAt(0) !== inputElValue.charAt(0).toUpperCase()) {
-      inputEl.style.setProperty("border", "2px solid red", "important");
+      inputError.innerText = "Use capital letter";
+      inputEl.insertAdjacentElement("afterend", inputError);
       inputEl.value = "";
-      inputEl.placeholder = "Use capital letter";
       return false;
     } else {
       inputEl.style.setProperty("border", "none");
@@ -44,7 +73,10 @@ inputBtn.addEventListener("click", (e) => {
       })
       .then((userData) => {
         console.log(userData);
+
         const bookContainer = document.getElementById("book-container");
+        const bookContainerChildren = bookContainer.children;
+        const multipleBookContainer = document.getElementById("multiple-book-container");
         const bookItems = userData.items;
 
         bookContainer.innerText = "";
@@ -87,68 +119,78 @@ inputBtn.addEventListener("click", (e) => {
             booksContainerHolder.appendChild(bookInfoPagesCount);
             bookContainer.appendChild(booksContainerHolder);
 
-            let moreItemsBtn = document.querySelector(".button-more");
-            if (!moreItemsBtn) {
-              moreItemsBtn = document.createElement("button");
-              moreItemsBtn.classList.add("button-more");
-              moreItemsBtn.innerText = "Show more";
-              container.appendChild(moreItemsBtn);
-            }
+            createMoreItemsBtn();
 
-            moreItemsBtn.addEventListener("click", () => {
-              bookContainer.innerText = "";
-
-              const filteredEnglishBooks = bookItems.filter((englishBook) => {
-                return englishBook.volumeInfo.language === "en" && englishBook.volumeInfo.pageCount > 0;
-              });
-
-              console.log(filteredEnglishBooks);
-
-              const mappedBooksInEnglish = () => {
-                filteredEnglishBooks.map((englishBook) => {
-                  const booksContainer = document.createElement("div");
-                  booksContainer.classList.add("bookInfo");
-
-                  const bookTitle = document.createElement("h1");
-                  bookTitle.classList.add("bookInfo__title");
-                  bookTitle.innerText = englishBook.volumeInfo.title;
-                  booksContainer.appendChild(bookTitle);
-
-                  const bookAuthor = document.createElement("h1");
-                  bookAuthor.classList.add("bookInfo__author");
-                  bookAuthor.innerText = englishBook.volumeInfo.authors;
-                  booksContainer.appendChild(bookAuthor);
-
-                  const bookCategories = document.createElement("p");
-                  bookCategories.classList.add("bookInfo__categories");
-                  bookCategories.innerText = englishBook.volumeInfo.categories;
-                  booksContainer.appendChild(bookCategories);
-
-                  let imgElement = document.createElement("img");
-                  imgElement.classList.add("bookInfo__imageContainer--image");
-                  imgElement.src = englishBook.volumeInfo.imageLinks.thumbnail;
-                  booksContainer.appendChild(imgElement);
-
-                  const bookSnippet = document.createElement("h2");
-                  bookSnippet.innerText = englishBook.searchInfo.textSnippet;
-                  bookSnippet.classList.add("bookInfo__snippet");
-                  booksContainer.appendChild(bookSnippet);
-
-                  const bookPagesCount = document.createElement("h3");
-                  bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
-                  bookPagesCount.classList.add("bookInfo__pageCount");
-                  booksContainer.appendChild(bookPagesCount);
-
-                  bookContainer.appendChild(booksContainer); // if replace bookContainer to multipleContainer nothing will work!
-                });
-              };
-              mappedBooksInEnglish();
-              // moreItemsBtn.style.display = "none";
-            });
+            moreItemsBtn.addEventListener("click", showMoreBooks);
           } else {
             alert("There are no English books");
           }
         };
+
+        const showMoreBooks = () => {
+          bookContainer.innerText = "";
+
+          const filteredEnglishBooks = bookItems.filter((englishBook) => {
+            return englishBook.volumeInfo.language === "en" && englishBook.volumeInfo.pageCount > 0;
+          });
+
+          console.log(filteredEnglishBooks);
+
+          const mappedBooksInEnglish = () => {
+            filteredEnglishBooks.map((englishBook) => {
+              const booksContainer = document.createElement("div");
+              booksContainer.classList.add("bookInfo");
+
+              const bookTitle = document.createElement("h1");
+              bookTitle.classList.add("bookInfo__title");
+              bookTitle.innerText = englishBook.volumeInfo.title;
+              booksContainer.appendChild(bookTitle);
+
+              const bookAuthor = document.createElement("h1");
+              bookAuthor.classList.add("bookInfo__author");
+              bookAuthor.innerText = englishBook.volumeInfo.authors;
+              booksContainer.appendChild(bookAuthor);
+
+              const bookCategories = document.createElement("p");
+              bookCategories.classList.add("bookInfo__categories");
+              bookCategories.innerText = englishBook.volumeInfo.categories;
+              booksContainer.appendChild(bookCategories);
+
+              let imgElement = document.createElement("img");
+              imgElement.classList.add("bookInfo__imageContainer--image");
+              imgElement.src = englishBook.volumeInfo.imageLinks.thumbnail;
+              booksContainer.appendChild(imgElement);
+
+              const bookSnippet = document.createElement("h2");
+              bookSnippet.innerText = englishBook.searchInfo.textSnippet;
+              bookSnippet.classList.add("bookInfo__snippet");
+              booksContainer.appendChild(bookSnippet);
+
+              const bookPagesCount = document.createElement("h3");
+              bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
+              bookPagesCount.classList.add("bookInfo__pageCount");
+              booksContainer.appendChild(bookPagesCount);
+
+              bookContainer.appendChild(booksContainer);
+            });
+          };
+          mappedBooksInEnglish();
+          moreItemsBtn.remove();
+          createLessItemsBtn();
+          lessItemsBtn.addEventListener("click", showLessBooks);
+        };
+
+        createMoreItemsBtn();
+        console.log(createMoreItemsBtn);
+        moreItemsBtn.addEventListener("click", showMoreBooks);
+
+        const showLessBooks = () => {
+          while (bookContainer.children.length > 1) {
+            bookContainer.removeChild(bookContainer.children[1]);
+          }
+          lessItemsBtn.remove();
+        };
+
         showInputValueBook();
       })
       .catch((error) => {
