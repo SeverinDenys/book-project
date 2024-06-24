@@ -6,7 +6,6 @@ let moreItemsBtn = document.querySelector(".button-more");
 let lessItemsBtn = document.querySelector(".button-less");
 let form = document.querySelector(".form");
 
-
 const createMoreItemsBtn = () => {
   if (!moreItemsBtn) {
     moreItemsBtn = document.createElement("button");
@@ -75,8 +74,7 @@ inputBtn.addEventListener("click", (e) => {
         console.log(userData);
 
         const bookContainer = document.getElementById("book-container");
-        const bookContainerChildren = bookContainer.children;
-        const multipleBookContainer = document.getElementById("multiple-book-container");
+
         const bookItems = userData.items;
 
         bookContainer.innerText = "";
@@ -180,17 +178,20 @@ inputBtn.addEventListener("click", (e) => {
           lessItemsBtn.addEventListener("click", showLessBooks);
         };
 
-        createMoreItemsBtn();
-        console.log(createMoreItemsBtn);
-        moreItemsBtn.addEventListener("click", showMoreBooks);
-
         const showLessBooks = () => {
           while (bookContainer.children.length > 1) {
             bookContainer.removeChild(bookContainer.children[1]);
           }
           lessItemsBtn.remove();
+          // moreItemsBtn = null; // clear the reference so it can be re-created
+          createMoreItemsBtn();
         };
 
+        createMoreItemsBtn();
+
+        moreItemsBtn.addEventListener("click", showMoreBooks);
+
+        // line 181 - 192 why it works that way? + line 192 doesn't show again more books
         showInputValueBook();
       })
       .catch((error) => {
