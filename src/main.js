@@ -174,6 +174,7 @@ inputBtn.addEventListener("click", (e) => {
           };
           mappedBooksInEnglish();
           moreItemsBtn.remove();
+          moreItemsBtn = null; // clear the reference so it can be re-created
           createLessItemsBtn();
           lessItemsBtn.addEventListener("click", showLessBooks);
         };
@@ -183,7 +184,7 @@ inputBtn.addEventListener("click", (e) => {
             bookContainer.removeChild(bookContainer.children[1]);
           }
           lessItemsBtn.remove();
-          // moreItemsBtn = null; // clear the reference so it can be re-created
+          moreItemsBtn = null; // clear the reference so it can be re-created
           createMoreItemsBtn();
         };
 
@@ -191,7 +192,7 @@ inputBtn.addEventListener("click", (e) => {
 
         moreItemsBtn.addEventListener("click", showMoreBooks);
 
-        // line 181 - 192 why it works that way? + line 192 doesn't show again more books
+        // line 182 - 193 why it works that way and how to add again the functionality
         showInputValueBook();
       })
       .catch((error) => {
