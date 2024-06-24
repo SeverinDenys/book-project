@@ -1,3 +1,4 @@
+
 .book-container {
   @media only screen and (min-width: 768px) {
     margin-top: 3rem;
@@ -6,8 +7,11 @@
     margin: 5rem auto 0;
     max-width: 70rem;
   }
+}
 
   .multiple-book-container {
+    min-height: 100px;
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -20,8 +24,7 @@
       max-width: 150rem;
     }
   }
-  
-}
+
 
 .bookInfo {
   display: flex;
@@ -190,4 +193,3 @@
   }
 }
 
- 
