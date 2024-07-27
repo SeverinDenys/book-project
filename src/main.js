@@ -2,9 +2,23 @@ import "./styles/main.scss";
 const apiKey = import.meta.env.VITE_API_KEY;
 const inputBtn = document.getElementById("form__button");
 const container = document.querySelector(".container");
+const otherBooksContainer = document.getElementById("multiple-book-container");
 let moreItemsBtn = document.querySelector(".button-more");
 let lessItemsBtn = document.querySelector(".button-less");
-let form = document.querySelector(".form");
+
+const isEnglishBookWithPages = (englishItem) =>
+  englishItem.volumeInfo.language === "en" && englishItem.volumeInfo.pageCount > 0;
+
+const createElementAndInsert = (tag, className, properties, container) => {
+  const el = document.createElement(tag);
+  el.classList.add(className);
+
+  for (let key in properties) {
+    el[key] = properties[key];
+  }
+
+  container.appendChild(el);
+};
 
 const createMoreItemsBtn = () => {
   if (!moreItemsBtn) {
@@ -38,7 +52,7 @@ inputBtn.addEventListener("click", (e) => {
 
   const checkBtnValidity = () => {
     // Allow letters, spaces, and common punctuation characters
-    const pattern = /^[A-Za-z0-9\s.,'!]+$/;
+    const pattern = /^[A-Za-z\s.,'!]+$/;
     const inputError = document.createElement("p");
     inputError.classList.add("form__input-error");
 
@@ -50,7 +64,7 @@ inputBtn.addEventListener("click", (e) => {
       inputError.innerText = "Use capital letter";
       inputEl.insertAdjacentElement("afterend", inputError);
       inputEl.value = "";
-      return false;
+      return false; // this case works
     } else {
       inputEl.style.setProperty("border", "none");
       inputEl.placeholder = "Search for the book";
@@ -59,6 +73,7 @@ inputBtn.addEventListener("click", (e) => {
   };
 
   if (!checkBtnValidity()) {
+    //// need explanation
     return;
   }
 
@@ -80,41 +95,49 @@ inputBtn.addEventListener("click", (e) => {
         bookContainer.innerText = "";
 
         const showInputValueBook = () => {
-          let englishObject = bookItems.find((englishItem) => englishItem.volumeInfo.language === "en");
+          let englishObject = bookItems.find(isEnglishBookWithPages);
 
           if (englishObject) {
             const booksContainerHolder = document.createElement("div");
             booksContainerHolder.classList.add("bookInfo");
 
-            const bookInfoTitle = document.createElement("h1");
-            bookInfoTitle.classList.add("bookInfo__title");
-            bookInfoTitle.innerText = englishObject.volumeInfo.title;
-            booksContainerHolder.appendChild(bookInfoTitle);
+            createElementAndInsert(
+              "h1",
+              "bookInfo__title",
+              { innerText: englishObject.volumeInfo.title },
+              booksContainerHolder,
+            );
+            createElementAndInsert(
+              "h1",
+              "bookInfo__authors",
+              { innerText: englishObject.volumeInfo.authors },
+              booksContainerHolder,
+            );
+            createElementAndInsert(
+              "p",
+              "bookInfo__categories",
+              { innerText: englishObject.volumeInfo.categories },
+              booksContainerHolder,
+            );
+            createElementAndInsert(
+              "img",
+              "bookInfo__imageContainer--image",
+              { src: englishObject.volumeInfo.imageLinks.thumbnail, alt: englishObject.volumeInfo.title },
+              booksContainerHolder,
+            );
+            createElementAndInsert(
+              "h2",
+              "bookInfo__snippet",
+              { innerText: englishObject.searchInfo.textSnippet },
+              booksContainerHolder,
+            );
+            createElementAndInsert(
+              "h3",
+              "bookInfo__pageCount",
+              { innerText: `${englishObject.volumeInfo.pageCount} pages` },
+              booksContainerHolder,
+            );
 
-            const bookInfoAuthor = document.createElement("h1");
-            bookInfoAuthor.classList.add("bookInfo__author");
-            bookInfoAuthor.innerText = englishObject.volumeInfo.authors;
-            booksContainerHolder.appendChild(bookInfoAuthor);
-
-            const bookInfoCategories = document.createElement("p");
-            bookInfoCategories.classList.add("bookInfo__categories");
-            bookInfoCategories.innerText = englishObject.volumeInfo.categories;
-            booksContainerHolder.appendChild(bookInfoCategories);
-
-            let imgInfoElement = document.createElement("img");
-            imgInfoElement.classList.add("bookInfo__imageContainer--image");
-            imgInfoElement.src = englishObject.volumeInfo.imageLinks.thumbnail;
-            booksContainerHolder.appendChild(imgInfoElement);
-
-            const bookInfoSnippet = document.createElement("h2");
-            bookInfoSnippet.innerText = englishObject.searchInfo.textSnippet;
-            bookInfoSnippet.classList.add("bookInfo__snippet");
-            booksContainerHolder.appendChild(bookInfoSnippet);
-
-            const bookInfoPagesCount = document.createElement("h3");
-            bookInfoPagesCount.innerText = `${englishObject.volumeInfo.pageCount} pages`;
-            bookInfoPagesCount.classList.add("bookInfo__pageCount");
-            booksContainerHolder.appendChild(bookInfoPagesCount);
             bookContainer.appendChild(booksContainerHolder);
 
             createMoreItemsBtn();
@@ -126,53 +149,69 @@ inputBtn.addEventListener("click", (e) => {
         };
 
         const showMoreBooks = () => {
-          bookContainer.innerText = "";
+          // bookContainer.innerText = "";
 
-          const filteredEnglishBooks = bookItems.filter((englishBook) => {
-            return englishBook.volumeInfo.language === "en" && englishBook.volumeInfo.pageCount > 0;
-          });
+          const filteredEnglishBooks = bookItems.filter(isEnglishBookWithPages);
 
           console.log(filteredEnglishBooks);
 
           const mappedBooksInEnglish = () => {
-            filteredEnglishBooks.map((englishBook) => {
-              const booksContainer = document.createElement("div");
-              booksContainer.classList.add("bookInfo");
+            filteredEnglishBooks
+              .filter((_, i) => i > 0)
+              .map((englishBook) => {
+                const booksContainer = document.createElement("div");
+                booksContainer.classList.add("bookInfo");
 
-              const bookTitle = document.createElement("h1");
-              bookTitle.classList.add("bookInfo__title");
-              bookTitle.innerText = englishBook.volumeInfo.title;
-              booksContainer.appendChild(bookTitle);
+                createElementAndInsert(
+                  "h1",
+                  "bookInfo__title",
+                  { innerText: englishBook.volumeInfo.title },
+                  booksContainer,
+                );
 
-              const bookAuthor = document.createElement("h1");
-              bookAuthor.classList.add("bookInfo__author");
-              bookAuthor.innerText = englishBook.volumeInfo.authors;
-              booksContainer.appendChild(bookAuthor);
+                createElementAndInsert(
+                  "h1",
+                  "bookInfo__authors",
+                  { innerText: englishBook.volumeInfo.authors },
+                  booksContainer,
+                );
 
-              const bookCategories = document.createElement("p");
-              bookCategories.classList.add("bookInfo__categories");
-              bookCategories.innerText = englishBook.volumeInfo.categories;
-              booksContainer.appendChild(bookCategories);
+                createElementAndInsert(
+                  "p",
+                  "bookInfo__categories",
+                  { innerText: englishBook.volumeInfo.categories },
+                  booksContainer,
+                );
 
-              let imgElement = document.createElement("img");
-              imgElement.classList.add("bookInfo__imageContainer--image");
-              imgElement.src = englishBook.volumeInfo.imageLinks.thumbnail;
-              booksContainer.appendChild(imgElement);
+                createElementAndInsert(
+                  "img",
+                  "bookInfo__imageContainer--image",
+                  { src: englishBook.volumeInfo.imageLinks.thumbnail, alt: englishBook.volumeInfo.title },
+                  booksContainer,
+                );
 
-              const bookSnippet = document.createElement("h2");
-              bookSnippet.innerText = englishBook.searchInfo.textSnippet;
-              bookSnippet.classList.add("bookInfo__snippet");
-              booksContainer.appendChild(bookSnippet);
+                createElementAndInsert(
+                  "h2",
+                  "bookInfo__snippet",
+                  { innerText: englishBook.searchInfo.textSnippet },
+                  booksContainer,
+                );
 
-              const bookPagesCount = document.createElement("h3");
-              bookPagesCount.innerText = `${englishBook.volumeInfo.pageCount} pages`;
-              bookPagesCount.classList.add("bookInfo__pageCount");
-              booksContainer.appendChild(bookPagesCount);
+                createElementAndInsert(
+                  "h3",
+                  "bookInfo__pageCount",
+                  { innerText: ` ${englishBook.volumeInfo.pageCount} pages ` },
+                  booksContainer,
+                );
 
-              bookContainer.appendChild(booksContainer);
-            });
+                otherBooksContainer.appendChild(booksContainer);
+              });
           };
           mappedBooksInEnglish();
+
+          //// troubles starting here
+          //// now it works but i need explanation if it is possible to fix and make easier to use.
+
           moreItemsBtn.remove();
           moreItemsBtn = null; // clear the reference so it can be re-created
           createLessItemsBtn();
@@ -180,19 +219,14 @@ inputBtn.addEventListener("click", (e) => {
         };
 
         const showLessBooks = () => {
-          while (bookContainer.children.length > 1) {
-            bookContainer.removeChild(bookContainer.children[1]);
-          }
+          otherBooksContainer.innerText = ""; // Clear all additional books
+
           lessItemsBtn.remove();
-          moreItemsBtn = null; // clear the reference so it can be re-created
+          lessItemsBtn = null;
           createMoreItemsBtn();
+          moreItemsBtn.addEventListener("click", showMoreBooks);
         };
 
-        createMoreItemsBtn();
-
-        moreItemsBtn.addEventListener("click", showMoreBooks);
-
-        // line 182 - 193 why it works that way and how to add again the functionality
         showInputValueBook();
       })
       .catch((error) => {
