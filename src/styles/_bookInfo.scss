@@ -34,7 +34,7 @@
   margin: 2rem 0 3rem 0;
   background:$analogous-main-color2;
   color: $main-color;
-  padding: 2rem 0;
+  padding: 2rem 3rem;
   border-radius: 1.5rem;
 
   @media only screen and (min-width: 1024px) {
@@ -52,9 +52,9 @@
     }
   }
 
-  &__author {
+  &__authors {
     padding: 1rem 0;
-    font-size: 3rem;
+    font-size: 2.5rem;
     @media only screen and (min-width: 768px) {
       font-size: 4rem;
     }
@@ -130,26 +130,31 @@
 }
 
 .rating-container {
+  
   padding: 1.5rem 0;
   text-align: center;
 
   &__text {
+    margin-bottom: 2rem;
     font-size: 2.5rem;
     font-weight: 700;
     color: $main-color;
   }
 
-  .stars-container {
-    &__star {
-      color: $main-color;
-      font-size: 4rem;
-      cursor: pointer;
-      margin: 0 .5rem;
-      transition: color 0.2s ease;
+   
+}
 
-      &.active {
-        color: $star-gold;
-      }
+.stars-container {
+  &__star {
+    color: $main-color;
+    font-size: 3rem;
+     
+    cursor: pointer;
+    margin: 0 .5rem;
+    transition: color 0.2s ease;
+
+    &.active {
+      color: $star-gold;
     }
   }
 }

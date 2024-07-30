@@ -1,48 +1,107 @@
 import "./styles/main.scss";
-const apiKey = import.meta.env.VITE_API_KEY;
+import { createElementAndInsert } from "./utils";
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 const inputBtn = document.getElementById("form__button");
 const container = document.querySelector(".container");
 const otherBooksContainer = document.getElementById("multiple-book-container");
-let moreItemsBtn = document.querySelector(".button-more");
-let lessItemsBtn = document.querySelector(".button-less");
+
+let moreItemsBtn;
+let lessItemsBtn;
 
 const isEnglishBookWithPages = (englishItem) =>
   englishItem.volumeInfo.language === "en" && englishItem.volumeInfo.pageCount > 0;
 
-const createElementAndInsert = (tag, className, properties, container) => {
-  const el = document.createElement(tag);
-  el.classList.add(className);
-
-  for (let key in properties) {
-    el[key] = properties[key];
-  }
-
-  container.appendChild(el);
-};
-
 const createMoreItemsBtn = () => {
-  if (!moreItemsBtn) {
-    moreItemsBtn = document.createElement("button");
-    moreItemsBtn.classList.add("button-more");
-    moreItemsBtn.innerText = "Show more";
-    container.appendChild(moreItemsBtn);
+  if (moreItemsBtn) {
+    return;
+  } else {
+    moreItemsBtn = createElementAndInsert("button", "button-more", { innerText: "Show more" }, container);
   }
 };
 
 const createLessItemsBtn = () => {
-  if (!lessItemsBtn) {
-    lessItemsBtn = document.createElement("button");
-    lessItemsBtn.classList.add("button-less");
-    lessItemsBtn.innerText = "Show less";
-    container.appendChild(lessItemsBtn);
+  if (lessItemsBtn) {
+    return;
+  } else {
+    lessItemsBtn = createElementAndInsert("button", "button-less", { innerText: "Show less" }, container);
   }
+};
+
+const checkBtnValidity = (inputElValue, inputEl) => {
+  // Allow letters, spaces, and common punctuation characters
+  const pattern = /^[A-Za-z\s.,'!]+$/;
+  const inputError = document.createElement("p");
+
+  inputError.classList.add("form__input-error");
+
+  if (!pattern.test(inputElValue)) {
+    inputError.innerText = "Wrong book title";
+    inputEl.insertAdjacentElement("afterend", inputError);
+
+    return false;
+  } else if (inputElValue.charAt(0) !== inputElValue.charAt(0).toUpperCase()) {
+    inputError.innerText = "Use capital letter";
+    inputEl.insertAdjacentElement("afterend", inputError);
+    inputEl.value = "";
+
+    return false; // this case works
+  } else {
+    inputEl.style.setProperty("border", "none");
+    inputEl.placeholder = "Search for the book";
+
+    return true;
+  }
+};
+
+const createBooksList = (books) => {
+  books
+    .filter((_, i) => i > 0)
+    .forEach((book) => {
+      const booksContainer = document.createElement("div");
+      booksContainer.classList.add("bookInfo");
+
+      createElementAndInsert("h1", "bookInfo__title", { innerText: book.volumeInfo.title }, booksContainer);
+
+      createElementAndInsert("h1", "bookInfo__authors", { innerText: book.volumeInfo.authors }, booksContainer);
+
+      createElementAndInsert("p", "bookInfo__categories", { innerText: book.volumeInfo.categories }, booksContainer);
+
+      createElementAndInsert(
+        "img",
+        "bookInfo__imageContainer--image",
+        { src: book.volumeInfo.imageLinks.thumbnail, alt: book.volumeInfo.title },
+        booksContainer,
+      );
+
+      createElementAndInsert(
+        "h2",
+        "bookInfo__snippet",
+        { innerText: book.searchInfo?.textSnippet || book.volumeInfo.description || "No description available" },
+        booksContainer,
+      );
+
+      createElementAndInsert(
+        "h3",
+        "bookInfo__pageCount",
+        { innerText: ` ${book.volumeInfo.pageCount} pages ` },
+        booksContainer,
+      );
+
+      booksContainer.addEventListener("click", () => {
+        localStorage.setItem("currentBook", JSON.stringify(book));
+        window.location.href = "./details.html";
+      });
+
+      otherBooksContainer.appendChild(booksContainer);
+    });
 };
 
 inputBtn.addEventListener("click", (e) => {
   e.preventDefault();
   const inputEl = document.querySelector(".form__input");
   const inputElValue = inputEl.value;
-  const booksUrl = `https://www.googleapis.com/books/v1/volumes?q=${inputElValue}&key=${apiKey}`;
+  const booksUrl = `https://www.googleapis.com/books/v1/volumes?q=${inputElValue}&key=${API_KEY}`;
 
   // Clear previous errors
   const previousError = document.querySelector(".form__input-error");
@@ -50,30 +109,7 @@ inputBtn.addEventListener("click", (e) => {
     previousError.remove();
   }
 
-  const checkBtnValidity = () => {
-    // Allow letters, spaces, and common punctuation characters
-    const pattern = /^[A-Za-z\s.,'!]+$/;
-    const inputError = document.createElement("p");
-    inputError.classList.add("form__input-error");
-
-    if (!pattern.test(inputElValue)) {
-      inputError.innerText = "Wrong book title";
-      inputEl.insertAdjacentElement("afterend", inputError);
-      return false;
-    } else if (inputElValue.charAt(0) !== inputElValue.charAt(0).toUpperCase()) {
-      inputError.innerText = "Use capital letter";
-      inputEl.insertAdjacentElement("afterend", inputError);
-      inputEl.value = "";
-      return false; // this case works
-    } else {
-      inputEl.style.setProperty("border", "none");
-      inputEl.placeholder = "Search for the book";
-      return true;
-    }
-  };
-
-  if (!checkBtnValidity()) {
-    //// need explanation
+  if (!checkBtnValidity(inputElValue, inputEl)) {
     return;
   }
 
@@ -86,10 +122,7 @@ inputBtn.addEventListener("click", (e) => {
         return response.json();
       })
       .then((userData) => {
-        console.log(userData);
-
         const bookContainer = document.getElementById("book-container");
-
         const bookItems = userData.items;
 
         bookContainer.innerText = "";
@@ -128,7 +161,12 @@ inputBtn.addEventListener("click", (e) => {
             createElementAndInsert(
               "h2",
               "bookInfo__snippet",
-              { innerText: englishObject.searchInfo.textSnippet },
+              {
+                innerText:
+                  englishObject.searchInfo?.textSnippet ||
+                  englishObject.volumeInfo.description ||
+                  "No description available",
+              },
               booksContainerHolder,
             );
             createElementAndInsert(
@@ -137,6 +175,11 @@ inputBtn.addEventListener("click", (e) => {
               { innerText: `${englishObject.volumeInfo.pageCount} pages` },
               booksContainerHolder,
             );
+
+            booksContainerHolder.addEventListener("click", () => {
+              localStorage.setItem("currentBook", JSON.stringify(englishObject));
+              window.location.href = "./details.html";
+            });
 
             bookContainer.appendChild(booksContainerHolder);
 
@@ -149,67 +192,10 @@ inputBtn.addEventListener("click", (e) => {
         };
 
         const showMoreBooks = () => {
-          // bookContainer.innerText = "";
-
           const filteredEnglishBooks = bookItems.filter(isEnglishBookWithPages);
 
-          console.log(filteredEnglishBooks);
+          createBooksList(filteredEnglishBooks);
 
-          const mappedBooksInEnglish = () => {
-            filteredEnglishBooks
-              .filter((_, i) => i > 0)
-              .map((englishBook) => {
-                const booksContainer = document.createElement("div");
-                booksContainer.classList.add("bookInfo");
-
-                createElementAndInsert(
-                  "h1",
-                  "bookInfo__title",
-                  { innerText: englishBook.volumeInfo.title },
-                  booksContainer,
-                );
-
-                createElementAndInsert(
-                  "h1",
-                  "bookInfo__authors",
-                  { innerText: englishBook.volumeInfo.authors },
-                  booksContainer,
-                );
-
-                createElementAndInsert(
-                  "p",
-                  "bookInfo__categories",
-                  { innerText: englishBook.volumeInfo.categories },
-                  booksContainer,
-                );
-
-                createElementAndInsert(
-                  "img",
-                  "bookInfo__imageContainer--image",
-                  { src: englishBook.volumeInfo.imageLinks.thumbnail, alt: englishBook.volumeInfo.title },
-                  booksContainer,
-                );
-
-                createElementAndInsert(
-                  "h2",
-                  "bookInfo__snippet",
-                  { innerText: englishBook.searchInfo.textSnippet },
-                  booksContainer,
-                );
-
-                createElementAndInsert(
-                  "h3",
-                  "bookInfo__pageCount",
-                  { innerText: ` ${englishBook.volumeInfo.pageCount} pages ` },
-                  booksContainer,
-                );
-
-                otherBooksContainer.appendChild(booksContainer);
-              });
-          };
-          mappedBooksInEnglish();
-
-          //// troubles starting here
           //// now it works but i need explanation if it is possible to fix and make easier to use.
 
           moreItemsBtn.remove();
@@ -219,7 +205,7 @@ inputBtn.addEventListener("click", (e) => {
         };
 
         const showLessBooks = () => {
-          otherBooksContainer.innerText = ""; // Clear all additional books
+          otherBooksContainer.innerText = "";
 
           lessItemsBtn.remove();
           lessItemsBtn = null;
