@@ -8,6 +8,7 @@ const otherBooksContainer = document.getElementById("multiple-book-container");
 
 let moreItemsBtn;
 let lessItemsBtn;
+let bookItems = [];
 
 const isEnglishBookWithPages = (englishItem) =>
   englishItem.volumeInfo.language === "en" && englishItem.volumeInfo.pageCount > 0;
@@ -26,6 +27,92 @@ const createLessItemsBtn = () => {
   } else {
     lessItemsBtn = createElementAndInsert("button", "button-less", { innerText: "Show less" }, container);
   }
+};
+
+const showInputValueBook = (bookContainer) => {
+  let englishObject = bookItems.find(isEnglishBookWithPages);
+
+  if (englishObject) {
+    const booksContainerHolder = document.createElement("div");
+    booksContainerHolder.classList.add("bookInfo");
+
+    createElementAndInsert(
+      "h1",
+      "bookInfo__title",
+      { innerText: englishObject.volumeInfo.title },
+      booksContainerHolder,
+    );
+    createElementAndInsert(
+      "h1",
+      "bookInfo__authors",
+      { innerText: englishObject.volumeInfo.authors },
+      booksContainerHolder,
+    );
+    createElementAndInsert(
+      "p",
+      "bookInfo__categories",
+      { innerText: englishObject.volumeInfo.categories },
+      booksContainerHolder,
+    );
+    createElementAndInsert(
+      "img",
+      "bookInfo__imageContainer--image",
+      { src: englishObject.volumeInfo.imageLinks.thumbnail, alt: englishObject.volumeInfo.title },
+      booksContainerHolder,
+    );
+    createElementAndInsert(
+      "h2",
+      "bookInfo__snippet",
+      {
+        innerText:
+          englishObject.searchInfo?.textSnippet ||
+          englishObject.volumeInfo.description ||
+          "No description available",
+      },
+      booksContainerHolder,
+    );
+    createElementAndInsert(
+      "h3",
+      "bookInfo__pageCount",
+      { innerText: `${englishObject.volumeInfo.pageCount} pages` },
+      booksContainerHolder,
+    );
+
+    booksContainerHolder.addEventListener("click", () => {
+      localStorage.setItem("currentBook", JSON.stringify(englishObject));
+      window.location.href = "./details.html";
+    });
+
+    bookContainer.appendChild(booksContainerHolder);
+
+    createMoreItemsBtn();
+
+    moreItemsBtn.addEventListener("click", showMoreBooks);
+  } else {
+    alert("There are no English books");
+  }
+};
+
+const showMoreBooks = () => {
+  const filteredEnglishBooks = bookItems.filter(isEnglishBookWithPages);
+  otherBooksContainer.innerText = "";
+  createBooksList(filteredEnglishBooks);
+
+  //// now it works but i need explanation if it is possible to fix and make easier to use.
+
+  moreItemsBtn.remove();
+  moreItemsBtn = null; // clear the reference so it can be re-created
+  createLessItemsBtn();
+  lessItemsBtn.addEventListener("click", showLessBooks);
+};
+
+const showLessBooks = () => {
+  otherBooksContainer.innerText = "";
+
+  lessItemsBtn.remove();
+  lessItemsBtn = null;
+  createMoreItemsBtn();
+  moreItemsBtn.addEventListener("click", showMoreBooks);
 };
 
 const checkBtnValidity = (inputElValue, inputEl) => {
@@ -73,11 +160,10 @@ const createBooksList = (books) => {
         { src: book.volumeInfo.imageLinks.thumbnail, alt: book.volumeInfo.title },
         booksContainer,
       );
-
       createElementAndInsert(
         "h2",
         "bookInfo__snippet",
-        { innerText: book.searchInfo?.textSnippet || book.volumeInfo.description || "No description available" },
+        { innerText: book?.searchInfo?.textSnippet || book.volumeInfo.description || "No description available" },
         booksContainer,
       );
 
@@ -123,97 +209,11 @@ inputBtn.addEventListener("click", (e) => {
       })
       .then((userData) => {
         const bookContainer = document.getElementById("book-container");
-        const bookItems = userData.items;
 
+        bookItems = userData.items;
         bookContainer.innerText = "";
 
-        const showInputValueBook = () => {
-          let englishObject = bookItems.find(isEnglishBookWithPages);
-
-          if (englishObject) {
-            const booksContainerHolder = document.createElement("div");
-            booksContainerHolder.classList.add("bookInfo");
-
-            createElementAndInsert(
-              "h1",
-              "bookInfo__title",
-              { innerText: englishObject.volumeInfo.title },
-              booksContainerHolder,
-            );
-            createElementAndInsert(
-              "h1",
-              "bookInfo__authors",
-              { innerText: englishObject.volumeInfo.authors },
-              booksContainerHolder,
-            );
-            createElementAndInsert(
-              "p",
-              "bookInfo__categories",
-              { innerText: englishObject.volumeInfo.categories },
-              booksContainerHolder,
-            );
-            createElementAndInsert(
-              "img",
-              "bookInfo__imageContainer--image",
-              { src: englishObject.volumeInfo.imageLinks.thumbnail, alt: englishObject.volumeInfo.title },
-              booksContainerHolder,
-            );
-            createElementAndInsert(
-              "h2",
-              "bookInfo__snippet",
-              {
-                innerText:
-                  englishObject.searchInfo?.textSnippet ||
-                  englishObject.volumeInfo.description ||
-                  "No description available",
-              },
-              booksContainerHolder,
-            );
-            createElementAndInsert(
-              "h3",
-              "bookInfo__pageCount",
-              { innerText: `${englishObject.volumeInfo.pageCount} pages` },
-              booksContainerHolder,
-            );
-
-            booksContainerHolder.addEventListener("click", () => {
-              localStorage.setItem("currentBook", JSON.stringify(englishObject));
-              window.location.href = "./details.html";
-            });
-
-            bookContainer.appendChild(booksContainerHolder);
-
-            createMoreItemsBtn();
-
-            moreItemsBtn.addEventListener("click", showMoreBooks);
-          } else {
-            alert("There are no English books");
-          }
-        };
-
-        const showMoreBooks = () => {
-          const filteredEnglishBooks = bookItems.filter(isEnglishBookWithPages);
-
-          createBooksList(filteredEnglishBooks);
-
-          //// now it works but i need explanation if it is possible to fix and make easier to use.
-
-          moreItemsBtn.remove();
-          moreItemsBtn = null; // clear the reference so it can be re-created
-          createLessItemsBtn();
-          lessItemsBtn.addEventListener("click", showLessBooks);
-        };
-
-        const showLessBooks = () => {
-          otherBooksContainer.innerText = "";
-
-          lessItemsBtn.remove();
-          lessItemsBtn = null;
-          createMoreItemsBtn();
-          moreItemsBtn.addEventListener("click", showMoreBooks);
-        };
-
-        showInputValueBook();
+        showInputValueBook(bookContainer);
       })
       .catch((error) => {
         console.error("Error:", error);

@@ -4,6 +4,11 @@ import { createElementAndInsert } from "./utils";
 
 const book = JSON.parse(localStorage.getItem("currentBook"));
 
+if(!book) { // TODO if there is no book
+  window.location.href = '/';
+}
+// let data = localStorage.getItem('commentes')
+
 const booksContainerHolder = document.createElement("div");
 const bookContainer = document.getElementById("book-container");
 booksContainerHolder.classList.add("bookInfo");
@@ -52,16 +57,16 @@ booksContainerHolder.appendChild(ratingContainer);
 createElementAndInsert("p", "rating-container__text", { innerText: "Rate this book?" }, booksContainerHolder);
 
 booksContainerHolder.appendChild(starsContainer);
-const starsItems = ["", "", "", "", ""];
+const starsItems = ["", "", "", "", ""]; // TODO
 starsItems.forEach(() => {
   createElementAndInsert("span", "stars-container__star", { innerText: "★" }, starsContainer);
 });
 // Add the star rating functionality using map
 const stars = starsContainer.querySelectorAll(".stars-container__star");
 const starArray = [...stars];
-starArray.map((star, index) => {
+starArray.forEach((star, index) => {
   star.addEventListener("click", () => {
-    starArray.map((star, index1) => {
+    starArray.forEach((star, index1) => {
       index >= index1 ? star.classList.add("active") : star.classList.remove("active");
     });
   });
@@ -70,3 +75,30 @@ starArray.map((star, index) => {
 formReviewContainer.appendChild(formReviewBtnHolder);
 booksContainerHolder.appendChild(formReviewContainer);
 bookContainer.appendChild(booksContainerHolder);
+
+
+
+// const formReview = document.createElement("form").classList.add("form-review");
+const formReview = createElementAndInsert('form', "form-review");
+const formTextareaDiv = createElementAndInsert('div', "textarea");
+
+createElementAndInsert("textarea", "textarea__text", { placeholder: "Describe your experience!", cols: 30 }, formTextareaDiv);
+createElementAndInsert("button", null, { innerText: "Submit"}, bookContainer);
+
+formReview.appendChild(formTextareaDiv);
+bookContainer.appendChild(formReview);
+
+// console.log(book)
+// data = {
+//   [book.id]: [
+//     {comment: 'fsdas'},
+//     {comment: '312312'},
+//     {comment: '312312312312312'}
+//   ],
+//   [book.id]: [
+//     {comment: 'fsdas'},
+//     {comment: '312312'}
+//   ],
+// }
+
+// localStorage.setItem('commentes', JSON.stringify(data))
