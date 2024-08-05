@@ -3,25 +3,30 @@ import "./styles/main.scss";
 import { createElementAndInsert } from "./utils";
 
 const book = JSON.parse(localStorage.getItem("currentBook"));
+console.log("book:", book);
+const bookId = book.id;
+console.log("bookId:", bookId);
 
-if(!book) { // TODO if there is no book
-  window.location.href = '/';
+// const bookId =
+
+if (!book) {
+  // TODO if there is no book
+  window.location.href = "/";
 }
+
+const bookContainer = document.getElementById("book-container");
+
 // let data = localStorage.getItem('commentes')
 
-const booksContainerHolder = document.createElement("div");
-const bookContainer = document.getElementById("book-container");
-booksContainerHolder.classList.add("bookInfo");
+const booksContainerHolder = createElementAndInsert("div", "bookInfo");
 
-const ratingContainer = document.createElement("div");
-ratingContainer.classList.add("rating-container");
+const ratingContainer = createElementAndInsert("div", "rating-container");
 
-const starsContainer = document.createElement("div");
-starsContainer.classList.add("star-container");
+const starsContainer = createElementAndInsert("div", "star-container");
 
 const formReviewContainer = document.createElement("div");
-const formReviewBtnHolder = document.createElement("div");
-formReviewBtnHolder.classList.add("form-review__btnHolder");
+
+const formReviewBtnHolder = createElementAndInsert("div", "form-review__btnHolder");
 
 createElementAndInsert("h1", "bookInfo__title", { innerText: book.volumeInfo.title }, booksContainerHolder);
 createElementAndInsert("h1", "bookInfo__authors", { innerText: book.volumeInfo.authors }, booksContainerHolder);
@@ -54,9 +59,12 @@ createElementAndInsert(
 );
 
 booksContainerHolder.appendChild(ratingContainer);
+
 createElementAndInsert("p", "rating-container__text", { innerText: "Rate this book?" }, booksContainerHolder);
 
 booksContainerHolder.appendChild(starsContainer);
+
+// creating star rating system
 const starsItems = ["", "", "", "", ""]; // TODO
 starsItems.forEach(() => {
   createElementAndInsert("span", "stars-container__star", { innerText: "★" }, starsContainer);
@@ -76,17 +84,61 @@ formReviewContainer.appendChild(formReviewBtnHolder);
 booksContainerHolder.appendChild(formReviewContainer);
 bookContainer.appendChild(booksContainerHolder);
 
+const formReview = createElementAndInsert("form", "form-review");
+const formTextareaDiv = createElementAndInsert("div", "textarea");
 
+createElementAndInsert(
+  "textarea",
+  "textarea__text",
+  { placeholder: "Describe your experience!", cols: 30 },
+  formTextareaDiv,
+);
 
-// const formReview = document.createElement("form").classList.add("form-review");
-const formReview = createElementAndInsert('form', "form-review");
-const formTextareaDiv = createElementAndInsert('div', "textarea");
-
-createElementAndInsert("textarea", "textarea__text", { placeholder: "Describe your experience!", cols: 30 }, formTextareaDiv);
-createElementAndInsert("button", null, { innerText: "Submit"}, bookContainer);
+const reviewBtn = createElementAndInsert("button", "btn", { type: "button", innerText: "Post" }, formReviewBtnHolder);
 
 formReview.appendChild(formTextareaDiv);
+formReviewBtnHolder.appendChild(reviewBtn);
+formReview.appendChild(formReviewBtnHolder);
 bookContainer.appendChild(formReview);
+
+// adding functionality to reviewBtn start
+
+let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+
+reviewBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  const textAreaEl = document.querySelector(".textarea__text");
+  const textAreaElValue = textAreaEl.value.trim(); // the trim() method of String values removes whitespace from both ends of this string and returns a new string, without modifying the original
+
+  const reviewContainer = createElementAndInsert("div", "review-container", null, bookContainer);
+  createElementAndInsert("p", "review-container__text", { innerText: textAreaElValue }, reviewContainer);
+
+  textAreaEl.value = "";
+  textAreaEl.placeholder = "Describe your experience!";
+
+  // CREATE LOCAL STORAGE FUNCTIONALITY
+  // doesn't work with dom elements - needs to be converted to array or object first
+
+  // Retrieve existing reviews from localStorage or if none - create an empty array
+
+  const newReview = { text: textAreaElValue };
+  reviews.push(newReview);
+
+  localStorage.setItem("reviews", JSON.stringify(reviews));
+
+  console.log("reviews:", reviews);
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  reviews.forEach((review) => {
+    const reviewContainer = createElementAndInsert("div", "review-container", null, bookContainer);
+    createElementAndInsert("p", "review-container__text", { innerText: review.text }, reviewContainer);
+  });
+});
+// adding functionality to reviewBtn end
+
+// нам треба спочатку отримати id книги - done;
+// нам треба перевірити, что коли ми завантажуємо сторінку цей id вже має коментарі
 
 // console.log(book)
 // data = {

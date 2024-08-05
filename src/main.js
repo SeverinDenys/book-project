@@ -97,8 +97,7 @@ const showMoreBooks = () => {
   const filteredEnglishBooks = bookItems.filter(isEnglishBookWithPages);
   otherBooksContainer.innerText = "";
   createBooksList(filteredEnglishBooks);
-
-  //// now it works but i need explanation if it is possible to fix and make easier to use.
+ 
 
   moreItemsBtn.remove();
   moreItemsBtn = null; // clear the reference so it can be re-created
