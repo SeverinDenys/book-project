@@ -3,8 +3,8 @@ import "./styles/main.scss";
 import { createElementAndInsert } from "./utils";
 
 function uuidv4() {
-  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
-    (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) =>
+    (+c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (+c / 4)))).toString(16),
   );
 }
 
@@ -117,19 +117,25 @@ reviewBtn.addEventListener("click", (e) => {
   const textAreaEl = document.querySelector(".textarea__text");
   const textAreaElValue = textAreaEl.value.trim(); // the trim() method of String values removes whitespace from both ends of this string and returns a new string, without modifying the original
 
-  const reviewContainer = createElementAndInsert("div", "review-container", null, bookContainer);
+  const reviewContainer = createElementAndInsert("div", "review-container", null, formReview);
   createElementAndInsert("p", "review-container__text", { innerText: textAreaElValue }, reviewContainer);
 
   textAreaEl.value = "";
   textAreaEl.placeholder = "Describe your experience!";
 
-  // CREATE LOCAL STORAGE FUNCTIONALITY
-  // doesn't work with dom elements - needs to be converted to array or object first
+  const iconsContainer = createElementAndInsert("div", "review-container__icons-container", null, reviewContainer);
 
-  // Retrieve existing reviews from localStorage or if none - create an empty array
+  createElementAndInsert("img", "icon-edit", { src: "public/images/icons-edit.png", alt: "Edit" }, iconsContainer);
+
+  createElementAndInsert(
+    "img",
+    "icon-delete",
+    { src: "public/images/icons-delete.png", alt: "Delete" },
+    iconsContainer,
+  );
 
   const newReview = { text: textAreaElValue, bookId: book.id, id: uuidv4() }; // TODO
-  review2.push(newReview)
+  review2.push(newReview);
   localStorage.setItem("reviews", JSON.stringify(review2));
 
   // const newReview = { text: textAreaElValue }; // TODO
@@ -140,7 +146,6 @@ reviewBtn.addEventListener("click", (e) => {
 
   // reviews[book.id].push(newReview);
 
-
   // localStorage.setItem("reviews", JSON.stringify(reviews));
 
   // console.log("reviews:", reviews);
@@ -149,36 +154,22 @@ reviewBtn.addEventListener("click", (e) => {
 // data-dsa-daw-fwae
 window.addEventListener("DOMContentLoaded", () => {
   review2
-  .filter(item => item.bookId === book.id)
-  .forEach((review) => {
-    const reviewContainer = createElementAndInsert("div", "review-container", null, bookContainer);
-    reviewContainer.setAttribute('data-id', book.id)
-    createElementAndInsert("p", "review-container__text", { innerText: review.text}, reviewContainer);
-  });
+    .filter((item) => item.bookId === book.id)
+    .forEach((review) => {
+      const reviewContainer = createElementAndInsert("div", "review-container", null, formReview);
+      reviewContainer.setAttribute("data-id", book.id);
 
-  // const booksReview = reviews[book.id] || [];
+      createElementAndInsert("p", "review-container__text", { innerText: review.text }, reviewContainer);
 
-  // booksReview.forEach((review) => {
-  //   const reviewContainer = createElementAndInsert("div", "review-container", null, bookContainer);
-  //   createElementAndInsert("p", "review-container__text", { innerText: review.text }, reviewContainer);
-  // });
+      const iconsContainer = createElementAndInsert("div", "review-container__icons-container", null, reviewContainer);
+
+      createElementAndInsert("img", "icon-edit", { src: "public/images/icons-edit.png", alt: "Edit" }, iconsContainer);
+
+      createElementAndInsert(
+        "img",
+        "icon-delete",
+        { src: "public/images/icons-delete.png", alt: "Delete" },
+        iconsContainer,
+      );
+    });
 });
-// adding functionality to reviewBtn end
-
-// нам треба спочатку отримати id книги - done;
-// нам треба перевірити, что коли ми завантажуємо сторінку цей id вже має коментарі
-
-// console.log(book)
-// data = {
-//   [book.id]: [
-//     {comment: 'fsdas'},
-//     {comment: '312312'},
-//     {comment: '312312312312312'}
-//   ],
-//   [book.id]: [
-//     {comment: 'fsdas'},
-//     {comment: '312312'}
-//   ],
-// }
-
-// localStorage.setItem('commentes', JSON.stringify(data))
