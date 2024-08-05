@@ -5,7 +5,6 @@ export const createElementAndInsert = (tag, className, properties, container) =>
     el.classList.add(className);
   }
  
-
   for (let key in properties) {
     el[key] = properties[key];
   }

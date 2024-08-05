@@ -2,6 +2,12 @@ import "./styles/main.scss";
 
 import { createElementAndInsert } from "./utils";
 
+function uuidv4() {
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+    (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+  );
+}
+
 const book = JSON.parse(localStorage.getItem("currentBook"));
 console.log("book:", book);
 const bookId = book.id;
@@ -103,7 +109,8 @@ bookContainer.appendChild(formReview);
 
 // adding functionality to reviewBtn start
 
-let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+let reviews = JSON.parse(localStorage.getItem("reviews")) || {};
+let review2 = JSON.parse(localStorage.getItem("reviews")) || [];
 
 reviewBtn.addEventListener("click", (e) => {
   e.preventDefault();
@@ -121,19 +128,40 @@ reviewBtn.addEventListener("click", (e) => {
 
   // Retrieve existing reviews from localStorage or if none - create an empty array
 
-  const newReview = { text: textAreaElValue };
-  reviews.push(newReview);
+  const newReview = { text: textAreaElValue, bookId: book.id, id: uuidv4() }; // TODO
+  review2.push(newReview)
+  localStorage.setItem("reviews", JSON.stringify(review2));
 
-  localStorage.setItem("reviews", JSON.stringify(reviews));
+  // const newReview = { text: textAreaElValue }; // TODO
 
-  console.log("reviews:", reviews);
+  // if(!reviews[book.id]) {
+  //   reviews[book.id] = [];
+  // }
+
+  // reviews[book.id].push(newReview);
+
+
+  // localStorage.setItem("reviews", JSON.stringify(reviews));
+
+  // console.log("reviews:", reviews);
 });
 
+// data-dsa-daw-fwae
 window.addEventListener("DOMContentLoaded", () => {
-  reviews.forEach((review) => {
+  review2
+  .filter(item => item.bookId === book.id)
+  .forEach((review) => {
     const reviewContainer = createElementAndInsert("div", "review-container", null, bookContainer);
-    createElementAndInsert("p", "review-container__text", { innerText: review.text }, reviewContainer);
+    reviewContainer.setAttribute('data-id', book.id)
+    createElementAndInsert("p", "review-container__text", { innerText: review.text}, reviewContainer);
   });
+
+  // const booksReview = reviews[book.id] || [];
+
+  // booksReview.forEach((review) => {
+  //   const reviewContainer = createElementAndInsert("div", "review-container", null, bookContainer);
+  //   createElementAndInsert("p", "review-container__text", { innerText: review.text }, reviewContainer);
+  // });
 });
 // adding functionality to reviewBtn end
 
