@@ -1,5 +1,4 @@
 import "./styles/main.scss";
-
 import { createElementAndInsert } from "./utils";
 
 function uuidv4() {
@@ -9,29 +8,18 @@ function uuidv4() {
 }
 
 const book = JSON.parse(localStorage.getItem("currentBook"));
-console.log("book:", book);
 const bookId = book.id;
-console.log("bookId:", bookId);
-
-// const bookId =
 
 if (!book) {
-  // TODO if there is no book
   window.location.href = "/";
 }
 
 const bookContainer = document.getElementById("book-container");
 
-// let data = localStorage.getItem('commentes')
-
 const booksContainerHolder = createElementAndInsert("div", "bookInfo");
-
 const ratingContainer = createElementAndInsert("div", "rating-container");
-
 const starsContainer = createElementAndInsert("div", "star-container");
-
 const formReviewContainer = document.createElement("div");
-
 const formReviewBtnHolder = createElementAndInsert("div", "form-review__btnHolder");
 
 createElementAndInsert("h1", "bookInfo__title", { innerText: book.volumeInfo.title }, booksContainerHolder);
@@ -70,12 +58,11 @@ createElementAndInsert("p", "rating-container__text", { innerText: "Rate this bo
 
 booksContainerHolder.appendChild(starsContainer);
 
-// creating star rating system
-const starsItems = ["", "", "", "", ""]; // TODO
+const starsItems = ["", "", "", "", ""];
 starsItems.forEach(() => {
   createElementAndInsert("span", "stars-container__star", { innerText: "★" }, starsContainer);
 });
-// Add the star rating functionality using map
+
 const stars = starsContainer.querySelectorAll(".stars-container__star");
 const starArray = [...stars];
 starArray.forEach((star, index) => {
@@ -107,57 +94,59 @@ formReviewBtnHolder.appendChild(reviewBtn);
 formReview.appendChild(formReviewBtnHolder);
 bookContainer.appendChild(formReview);
 
-// adding functionality to reviewBtn start
+let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
 
-let reviews = JSON.parse(localStorage.getItem("reviews")) || {};
-let review2 = JSON.parse(localStorage.getItem("reviews")) || [];
+const deleteIconFunc = (deleteIcon) => {
+  deleteIcon.addEventListener("click", () => {
+    const reviewContainer = deleteIcon.closest(".review-container");
+    if (reviewContainer) {
+      const reviewId = reviewContainer.getAttribute("data-id");
+      reviewContainer.remove();
+      reviews = reviews.filter((r) => r.id !== reviewId);
+      //r.id !== reviewId: Includes all reviews except the one with the matching reviewId.
+      localStorage.setItem("reviews", JSON.stringify(reviews));
+    }
+  });
+};
 
 reviewBtn.addEventListener("click", (e) => {
   e.preventDefault();
   const textAreaEl = document.querySelector(".textarea__text");
-  const textAreaElValue = textAreaEl.value.trim(); // the trim() method of String values removes whitespace from both ends of this string and returns a new string, without modifying the original
+  const textAreaElValue = textAreaEl.value.trim();
+
+  const newReview = { text: textAreaElValue, bookId: book.id, id: uuidv4() };
+  reviews.push(newReview);
+
+  localStorage.setItem("reviews", JSON.stringify(reviews));
 
   const reviewContainer = createElementAndInsert("div", "review-container", null, formReview);
-  createElementAndInsert("p", "review-container__text", { innerText: textAreaElValue }, reviewContainer);
+  reviewContainer.setAttribute("data-id", newReview.id);
 
-  textAreaEl.value = "";
-  textAreaEl.placeholder = "Describe your experience!";
+  createElementAndInsert("p", "review-container__text", { innerText: newReview.text }, reviewContainer);
 
   const iconsContainer = createElementAndInsert("div", "review-container__icons-container", null, reviewContainer);
 
   createElementAndInsert("img", "icon-edit", { src: "public/images/icons-edit.png", alt: "Edit" }, iconsContainer);
 
-  createElementAndInsert(
+  const deleteIcon = createElementAndInsert(
     "img",
     "icon-delete",
     { src: "public/images/icons-delete.png", alt: "Delete" },
     iconsContainer,
   );
 
-  const newReview = { text: textAreaElValue, bookId: book.id, id: uuidv4() }; // TODO
-  review2.push(newReview);
-  localStorage.setItem("reviews", JSON.stringify(review2));
+  deleteIconFunc(deleteIcon);
 
-  // const newReview = { text: textAreaElValue }; // TODO
-
-  // if(!reviews[book.id]) {
-  //   reviews[book.id] = [];
-  // }
-
-  // reviews[book.id].push(newReview);
-
-  // localStorage.setItem("reviews", JSON.stringify(reviews));
-
-  // console.log("reviews:", reviews);
+  textAreaEl.value = "";
+  textAreaEl.placeholder = "Describe your experience!";
 });
 
-// data-dsa-daw-fwae
 window.addEventListener("DOMContentLoaded", () => {
-  review2
-    .filter((item) => item.bookId === book.id)
+  reviews
+    .filter((review) => review.bookId === book.id)
     .forEach((review) => {
       const reviewContainer = createElementAndInsert("div", "review-container", null, formReview);
-      reviewContainer.setAttribute("data-id", book.id);
+      reviewContainer.setAttribute("data-id", review.id);
 
       createElementAndInsert("p", "review-container__text", { innerText: review.text }, reviewContainer);
 
@@ -165,11 +154,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
       createElementAndInsert("img", "icon-edit", { src: "public/images/icons-edit.png", alt: "Edit" }, iconsContainer);
 
-      createElementAndInsert(
+      const deleteIcon = createElementAndInsert(
         "img",
         "icon-delete",
         { src: "public/images/icons-delete.png", alt: "Delete" },
         iconsContainer,
       );
+
+      deleteIconFunc(deleteIcon);
     });
 });
