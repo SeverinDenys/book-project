@@ -10,6 +10,8 @@ function uuidv4() {
 const book = JSON.parse(localStorage.getItem("currentBook"));
 const bookId = book.id;
 
+let editingComment = null;
+
 if (!book) {
   window.location.href = "/";
 }
@@ -96,13 +98,20 @@ bookContainer.appendChild(formReview);
 
 let reviews = JSON.parse(localStorage.getItem("reviews")) || [];
 
-const editIconFunc = (editIcon) => {
+const editCommentHandler = (editIcon) => {
   editIcon.addEventListener("click", () => {
     const reviewContainer = editIcon.closest(".review-container");
+    const reviewId = reviewContainer.getAttribute("data-id");
     const reviewText = reviewContainer.querySelector(".review-container__text");
     const textAreaText = document.querySelector(".textarea__text");
     textAreaText.value = reviewText.innerText;
     textAreaText.scrollIntoView({ behavior: "smooth" });
+
+    const currentComment = reviews.find(item => item.id === reviewId);
+
+    if(currentComment) {
+      editingComment = currentComment;
+    }
     /// somehow it should just be able to click on post btn save the comment and rerender it in the same container it was takes
   });
 };
@@ -113,8 +122,9 @@ const deleteIconFunc = (deleteIcon) => {
     if (reviewContainer) {
       const reviewId = reviewContainer.getAttribute("data-id");
       reviewContainer.remove();
+    
       reviews = reviews.filter((r) => r.id !== reviewId);
-      //r.id !== reviewId: Includes all reviews except the one with the matching reviewId.
+      // //r.id !== reviewId: Includes all reviews except the one with the matching reviewId.
       localStorage.setItem("reviews", JSON.stringify(reviews));
     }
   });
@@ -123,51 +133,77 @@ const deleteIconFunc = (deleteIcon) => {
 reviewBtn.addEventListener("click", (e) => {
   e.preventDefault();
   const textAreaEl = document.querySelector(".textarea__text");
-  const textAreaElValue = textAreaEl.value.trim();
-  // Clear previous error messages if any
-  const existingError = document.querySelector(".form__input-error");
-  if (existingError) {
-    existingError.remove();
+
+  if(!editingComment) { // There is no editing comment
+    const textAreaElValue = textAreaEl.value.trim();
+    // Clear previous error messages if any
+    const existingError = document.querySelector(".form__input-error");
+    if (existingError) {
+      existingError.remove();
+    }
+  
+    if (textAreaElValue === "") {
+      const inputError = createElementAndInsert("p", "form__input-error", { innerText: "No review added" });
+      textAreaEl.insertAdjacentElement("afterend", inputError);
+      return;
+    }
+  
+    const newReview = { text: textAreaElValue, id: uuidv4(), bookId: book.id };
+    reviews.push(newReview);
+  
+    localStorage.setItem("reviews", JSON.stringify(reviews));
+  
+    const reviewContainer = createElementAndInsert("div", "review-container", null, formReview);
+    reviewContainer.setAttribute("data-id", newReview.id);
+  
+    createElementAndInsert("p", "review-container__text", { innerText: newReview.text }, reviewContainer);
+  
+    const iconsContainer = createElementAndInsert("div", "review-container__icons-container", null, reviewContainer);
+  
+    const editIcon = createElementAndInsert(
+      "img",
+      "icon-edit",
+      { src: "public/images/icons-edit.png", alt: "Edit" },
+      iconsContainer,
+    );
+  
+    const deleteIcon = createElementAndInsert(
+      "img",
+      "icon-delete",
+      { src: "public/images/icons-delete.png", alt: "Delete" },
+      iconsContainer,
+    );
+  
+    editCommentHandler(editIcon);
+  
+    deleteIconFunc(deleteIcon);
+  
   }
 
-  if (textAreaElValue === "") {
-    const inputError = createElementAndInsert("p", "form__input-error", { innerText: "No review added" });
-    textAreaEl.insertAdjacentElement("afterend", inputError);
-    return;
+
+  if(editingComment) {
+    const textAreaEl = document.querySelector(".textarea__text");
+    const textAreaElValue = textAreaEl.value.trim();
+    const comment =  document.querySelector('[data-id] p');
+
+    if(comment) {
+      comment.innerText = textAreaElValue;
+    }
+
+    reviews = reviews.map(item => {
+      if(item.id === editingComment.id) {
+        return {
+          ...item,
+          text: textAreaElValue
+        }
+      } else {
+        return item;
+      }
+    });
+    localStorage.setItem("reviews", JSON.stringify(reviews));    
   }
 
-  const newReview = { text: textAreaElValue, id: uuidv4(), bookId: book.id };
-  reviews.push(newReview);
-
-  localStorage.setItem("reviews", JSON.stringify(reviews));
-
-  const reviewContainer = createElementAndInsert("div", "review-container", null, formReview);
-  reviewContainer.setAttribute("data-id", newReview.id);
-
-  createElementAndInsert("p", "review-container__text", { innerText: newReview.text }, reviewContainer);
-
-  const iconsContainer = createElementAndInsert("div", "review-container__icons-container", null, reviewContainer);
-
-  const editIcon = createElementAndInsert(
-    "img",
-    "icon-edit",
-    { src: "public/images/icons-edit.png", alt: "Edit" },
-    iconsContainer,
-  );
-
-  const deleteIcon = createElementAndInsert(
-    "img",
-    "icon-delete",
-    { src: "public/images/icons-delete.png", alt: "Delete" },
-    iconsContainer,
-  );
-
-  editIconFunc(editIcon);
-
-  deleteIconFunc(deleteIcon);
-
-  textAreaEl.value = "";
-  textAreaEl.placeholder = "Describe your experience!";
+  textAreaEl.value = "";  
 });
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -195,7 +231,7 @@ window.addEventListener("DOMContentLoaded", () => {
         iconsContainer,
       );
 
-      editIconFunc(editIcon);
+      editCommentHandler(editIcon);
       deleteIconFunc(deleteIcon);
     });
 });
