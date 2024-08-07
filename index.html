@@ -5,34 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Fontawesome CDN link -->
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
-    <title>Book Project</title>
+    <title>Book Blog</title>
   </head>
   <body>
-
-    <div class="container"> 
-  
-        <!-- Introduction part start -->
-        <div id="introduction" class="introduction">
-        <h1 class="introduction__title">Online Book Library</h1>
-        <p class="introduction__text">Type your book</p>
+    <div class="container">
+      <!-- Introduction part start -->
+      <div id="introduction" class="introduction">
+         <h1 class="introduction__title">Book Blog</h1>
+         <p class="introduction__text">Type your book</p>
       </div>
-        <!-- Introduction part end -->
-
+      <!-- Introduction part end -->
       <!-- Form section start -->
-      <section class="form-container"
-      id="form-container">
-        <form class="form">
-          <input type="search" class="form__input" placeholder="Search for the book">
-          <button class="form__button" id="form__button" type="submit">Submit</button>
-        </form>
+      <section class="form-container" id="form-container">
+         <form class="form" id="search-form">
+            <input type="search" class="form__input" id="search-input" placeholder="Search for the book">
+            <button class="form__button" id="form__button" type="submit">Submit</button>
+         </form>
       </section>
-
-      
       <!-- Form section end -->
-
-     <div class="book-container" id="book-container">
-     </div> 
-    </div>
+      <div class="book-container" id="book-container">
+         
+      </div>
+      <div class="multiple-book-container" id="multiple-book-container"></div>
+   </div>
+   
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
