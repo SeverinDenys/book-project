@@ -107,9 +107,9 @@ const editCommentHandler = (editIcon) => {
     textAreaText.value = reviewText.innerText;
     textAreaText.scrollIntoView({ behavior: "smooth" });
 
-    const currentComment = reviews.find(item => item.id === reviewId);
+    const currentComment = reviews.find((item) => item.id === reviewId);
 
-    if(currentComment) {
+    if (currentComment) {
       editingComment = currentComment;
     }
     /// somehow it should just be able to click on post btn save the comment and rerender it in the same container it was takes
@@ -122,7 +122,7 @@ const deleteIconFunc = (deleteIcon) => {
     if (reviewContainer) {
       const reviewId = reviewContainer.getAttribute("data-id");
       reviewContainer.remove();
-    
+
       reviews = reviews.filter((r) => r.id !== reviewId);
       // //r.id !== reviewId: Includes all reviews except the one with the matching reviewId.
       localStorage.setItem("reviews", JSON.stringify(reviews));
@@ -134,76 +134,75 @@ reviewBtn.addEventListener("click", (e) => {
   e.preventDefault();
   const textAreaEl = document.querySelector(".textarea__text");
 
-  if(!editingComment) { // There is no editing comment
+  if (!editingComment) {
+    // There is no editing comment
     const textAreaElValue = textAreaEl.value.trim();
     // Clear previous error messages if any
     const existingError = document.querySelector(".form__input-error");
     if (existingError) {
       existingError.remove();
     }
-  
+
     if (textAreaElValue === "") {
       const inputError = createElementAndInsert("p", "form__input-error", { innerText: "No review added" });
       textAreaEl.insertAdjacentElement("afterend", inputError);
       return;
     }
-  
+
     const newReview = { text: textAreaElValue, id: uuidv4(), bookId: book.id };
     reviews.push(newReview);
-  
+
     localStorage.setItem("reviews", JSON.stringify(reviews));
-  
+
     const reviewContainer = createElementAndInsert("div", "review-container", null, formReview);
     reviewContainer.setAttribute("data-id", newReview.id);
-  
+
     createElementAndInsert("p", "review-container__text", { innerText: newReview.text }, reviewContainer);
-  
+
     const iconsContainer = createElementAndInsert("div", "review-container__icons-container", null, reviewContainer);
-  
+
     const editIcon = createElementAndInsert(
       "img",
       "icon-edit",
       { src: "public/images/icons-edit.png", alt: "Edit" },
       iconsContainer,
     );
-  
+
     const deleteIcon = createElementAndInsert(
       "img",
       "icon-delete",
       { src: "public/images/icons-delete.png", alt: "Delete" },
       iconsContainer,
     );
-  
+
     editCommentHandler(editIcon);
-  
+
     deleteIconFunc(deleteIcon);
-  
   }
 
-
-  if(editingComment) {
+  if (editingComment) {
     const textAreaEl = document.querySelector(".textarea__text");
     const textAreaElValue = textAreaEl.value.trim();
-    const comment =  document.querySelector('[data-id] p');
+    const comment = document.querySelector("[data-id] p");
 
-    if(comment) {
+    if (comment) {
       comment.innerText = textAreaElValue;
     }
 
-    reviews = reviews.map(item => {
-      if(item.id === editingComment.id) {
+    reviews = reviews.map((item) => {
+      if (item.id === editingComment.id) {
         return {
           ...item,
-          text: textAreaElValue
-        }
+          text: textAreaElValue,
+        };
       } else {
         return item;
       }
     });
-    localStorage.setItem("reviews", JSON.stringify(reviews));    
+    localStorage.setItem("reviews", JSON.stringify(reviews));
   }
 
-  textAreaEl.value = "";  
+  textAreaEl.value = "";
 });
 
 window.addEventListener("DOMContentLoaded", () => {
