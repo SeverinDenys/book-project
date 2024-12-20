@@ -8,7 +8,7 @@ function uuidv4() {
 }
 
 const book = JSON.parse(localStorage.getItem("currentBook"));
-const bookId = book.id;
+ 
 
 let editingComment = null;
 
